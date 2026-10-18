@@ -1,0 +1,547 @@
+<title>Alexander Ortiz</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout concept: a service-status page for one person. The project tracker is the hero.
+   Status is drawn as a moon phase (full = live, half = building, ring = planned), a nod to the lunalome handle. */
+:root {
+  color-scheme: dark;
+  --bg: #0A1019;
+  --surface: #111A27;
+  --line: #223044;
+  --fg: #E6EBF2;
+  --muted: #93A1B5;
+  --accent: #D9CFA0;
+  --live: #4FC38A;
+  --build: #E3A94B;
+  --plan: #8FA0B8;
+  --f-display: "Bricolage Grotesque", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+    --bg: #F2F5F8;
+    --surface: #FFFFFF;
+    --line: #D5DCE5;
+    --fg: #0F1A2A;
+    --muted: #566479;
+    --accent: #7A5C10;
+    --live: #137A49;
+    --build: #8F6209;
+    --plan: #55657B;
+  }
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #F2F5F8;
+  --surface: #FFFFFF;
+  --line: #D5DCE5;
+  --fg: #0F1A2A;
+  --muted: #566479;
+  --accent: #7A5C10;
+  --live: #137A49;
+  --build: #8F6209;
+  --plan: #55657B;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font: 400 16px/1.6 var(--f-body); }
+a { color: var(--accent); text-underline-offset: 3px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+::selection { background: color-mix(in srgb, var(--accent) 35%, transparent); }
+h1, h2, h3, p, ul, ol { margin: 0; }
+h1, h2, h3 { text-wrap: balance; }
+
+.page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding-block: 20px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* Top bar */
+.top { display: flex; justify-content: space-between; align-items: center; gap: 12px 24px; flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 10px; font: 500 0.85rem var(--f-mono); letter-spacing: 0.04em; }
+.top nav { display: flex; align-items: center; gap: 4px 18px; flex-wrap: wrap; font: 500 0.8rem var(--f-mono); }
+.top nav a { color: var(--muted); text-decoration: none; padding: 4px 0; }
+.top nav a:hover { color: var(--fg); }
+.tbtn { font: 500 0.75rem var(--f-mono); color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; cursor: pointer; }
+.tbtn:hover { color: var(--fg); border-color: var(--muted); }
+
+/* Moon phases: the status system */
+.s-live { --c: var(--live); }
+.s-building { --c: var(--build); }
+.s-planned { --c: var(--plan); }
+.moon { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid var(--c, var(--accent)); flex: none; display: inline-block; }
+.moon.s-live { background: var(--c); }
+.moon.s-building { background: linear-gradient(90deg, var(--c) 50%, transparent 50%); }
+.moon.s-planned { background: transparent; }
+.moon.brandmoon { --c: var(--accent); background: linear-gradient(90deg, transparent 38%, var(--c) 38%); }
+
+/* Hero */
+.hero { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: 40px; align-items: end; padding-block: 64px 48px; }
+.role { font: 500 0.95rem var(--f-mono); color: var(--accent); margin-bottom: 14px; }
+h1 { font: 700 clamp(2.7rem, 9vw, 5.4rem)/0.95 var(--f-display); letter-spacing: -0.035em; margin-bottom: 22px; }
+.lede { max-width: 54ch; font-size: 1.125rem; margin-bottom: 20px; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; }
+.facts li { font: 400 0.78rem var(--f-mono); color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; }
+
+.board { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px 22px; }
+.board h2 { font: 500 0.72rem var(--f-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.board ul { list-style: none; padding: 0; }
+.board li { display: grid; grid-template-columns: 14px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line); }
+.board li:first-child { border-top: 0; }
+.board .lbl { font-weight: 600; }
+.board .desc { display: block; font-size: 0.8rem; color: var(--muted); font-weight: 400; }
+.board .num { font: 500 1.9rem/1 var(--f-mono); color: var(--c); font-variant-numeric: tabular-nums; }
+.board .upd { font: 400 0.72rem var(--f-mono); color: var(--muted); border-top: 1px solid var(--line); padding-top: 12px; margin-top: 4px; }
+
+/* Sections */
+section { padding-block: 40px; border-top: 1px solid var(--line); }
+.hero { border-top: 0; }
+h2.sec { font: 600 clamp(1.5rem, 3.4vw, 2rem)/1.15 var(--f-display); letter-spacing: -0.02em; margin-bottom: 8px; }
+.intro { color: var(--muted); max-width: 62ch; margin-bottom: 24px; }
+
+/* Project tracker */
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.fbtn { font: 500 0.78rem var(--f-mono); color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+.fbtn:hover { color: var(--fg); border-color: var(--muted); }
+.fbtn[aria-pressed="true"] { color: var(--bg); background: var(--fg); border-color: var(--fg); }
+.fbtn .ct { font-variant-numeric: tabular-nums; opacity: 0.75; }
+
+.proj { border-top: 1px solid var(--line); }
+.proj:last-child { border-bottom: 1px solid var(--line); }
+.proj summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 14px minmax(0, 1fr) auto; gap: 8px 16px; align-items: start; padding: 18px 4px; }
+.proj summary::-webkit-details-marker { display: none; }
+.proj summary:hover .pname { text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 4px; }
+.proj .moon { margin-top: 7px; }
+.pname { font: 600 1.2rem/1.3 var(--f-display); letter-spacing: -0.01em; }
+.psum { color: var(--muted); max-width: 64ch; margin-top: 2px; }
+.pmeta { display: flex; align-items: center; gap: 14px; font: 500 0.7rem var(--f-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); padding-top: 8px; white-space: nowrap; }
+.pmeta .st { color: var(--c); }
+.pmeta::after { content: ""; width: 7px; height: 7px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg); transition: transform 0.15s; margin-bottom: 3px; }
+.proj[open] .pmeta::after { transform: rotate(-135deg); margin-bottom: -2px; }
+.pbody { padding: 0 4px 26px 34px; }
+.pbody ul { padding-left: 18px; display: grid; gap: 8px; max-width: 70ch; margin-bottom: 16px; }
+.pbody li::marker { color: var(--muted); }
+.since { font: 400 0.75rem var(--f-mono); color: var(--muted); margin-bottom: 10px; }
+.stack { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; padding: 0 !important; margin: 0 !important; }
+.stack li { font: 400 0.72rem var(--f-mono); color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 2px 8px; }
+
+/* Case study */
+.case { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 40px; }
+.case h3 { font: 600 1.6rem/1.15 var(--f-display); letter-spacing: -0.02em; margin-bottom: 14px; }
+.case p { margin-bottom: 14px; max-width: 52ch; }
+.take { font: 500 0.95rem var(--f-body); border-left: 2px solid var(--accent); padding-left: 14px; margin-top: 20px; }
+.timeline { list-style: none; padding: 0; border-left: 1px solid var(--line); margin-left: 5px; }
+.timeline li { position: relative; padding: 0 0 26px 26px; }
+.timeline li:last-child { padding-bottom: 0; }
+.timeline li::before { content: ""; position: absolute; left: -6px; top: 7px; width: 11px; height: 11px; border-radius: 50%; background: var(--bg); border: 1.5px solid var(--accent); }
+.timeline .when { font: 500 0.75rem var(--f-mono); letter-spacing: 0.06em; color: var(--accent); display: block; margin-bottom: 2px; }
+.timeline .what { max-width: 58ch; }
+
+/* Principles */
+.principles { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0 40px; }
+.principles li { border-top: 1px solid var(--line); padding: 16px 0 20px; }
+.principles strong { display: block; font: 600 1.1rem var(--f-display); margin-bottom: 4px; }
+.principles span { color: var(--muted); }
+
+/* Experience */
+.job { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 6px 32px; padding: 20px 0; border-top: 1px solid var(--line); }
+.job:first-of-type { border-top: 0; padding-top: 4px; }
+.job .meta { font: 400 0.8rem var(--f-mono); color: var(--muted); }
+.job .meta b { display: block; color: var(--fg); font-weight: 500; }
+.job h3 { font: 600 1.15rem var(--f-display); margin-bottom: 8px; }
+.job ul { padding-left: 18px; display: grid; gap: 6px; max-width: 68ch; }
+.job li::marker { color: var(--muted); }
+
+/* Credentials */
+.cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 40px; }
+.cols h3 { font: 600 1.1rem var(--f-display); margin-bottom: 12px; }
+.edu { list-style: none; padding: 0; display: grid; gap: 16px; }
+.edu b { display: block; font-weight: 600; }
+.edu span { color: var(--muted); font-size: 0.9rem; }
+.certs { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 8px; }
+.cert { display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 10px; align-items: center; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; background: var(--surface); }
+.cert b { display: block; font: 500 0.88rem var(--f-mono); }
+.cert small { color: var(--muted); font-size: 0.74rem; }
+.legend { font: 400 0.75rem var(--f-mono); color: var(--muted); margin-top: 12px; display: flex; gap: 18px; flex-wrap: wrap; }
+.legend span { display: inline-flex; align-items: center; gap: 8px; }
+
+/* Off the clock + contact */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin-bottom: 16px; }
+.chips li { border: 1px solid var(--line); border-radius: 999px; padding: 5px 14px; font-size: 0.92rem; }
+.note { color: var(--muted); max-width: 62ch; }
+.links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+.links a { font: 500 0.85rem var(--f-mono); text-decoration: none; color: var(--fg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; background: var(--surface); }
+.links a:hover { border-color: var(--accent); color: var(--accent); }
+.foot { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px 24px; border-top: 1px solid var(--line); padding-top: 18px; font: 400 0.75rem var(--f-mono); color: var(--muted); }
+
+@media (max-width: 760px) {
+  .hero { grid-template-columns: minmax(0, 1fr); gap: 28px; padding-block: 36px 28px; }
+  .case, .cols { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .job { grid-template-columns: minmax(0, 1fr); }
+  .proj summary { grid-template-columns: 14px minmax(0, 1fr); }
+  .pmeta { grid-column: 2; padding-top: 0; }
+  .pbody { padding-left: 4px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pmeta::after { transition: none; }
+}
+</style>
+
+<div class="page">
+  <header class="top">
+    <div class="brand"><span class="moon brandmoon" aria-hidden="true"></span>lunalome</div>
+    <nav aria-label="Sections">
+      <a href="#projects">Projects</a>
+      <a href="#case-study">Case study</a>
+      <a href="#experience">Experience</a>
+      <a href="#credentials">Credentials</a>
+      <button class="tbtn" id="theme" type="button" aria-label="Switch between light and dark theme">Theme</button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="name">
+      <div>
+        <p class="role">Cyber Operations Analyst at Hillwood</p>
+        <h1 id="name">Alexander Ortiz</h1>
+        <p class="lede">I work the security queue and report on vulnerabilities. At home I run a Proxmox lab and track every project below, including the ones that broke.</p>
+        <ul class="facts">
+          <li>Dallas-Fort Worth, TX</li>
+          <li>English and Spanish</li>
+          <li>Heading toward identity and access management and cloud security</li>
+        </ul>
+      </div>
+      <aside class="board" aria-label="Project status summary">
+        <h2>Project status</h2>
+        <ul id="board"></ul>
+        <p class="upd" id="updated"></p>
+      </aside>
+    </section>
+
+    <section id="projects" aria-labelledby="projects-h">
+      <h2 class="sec" id="projects-h">Project tracker</h2>
+      <p class="intro">Work, lab and study projects with their real status. Open any row for what I built, what it runs on and the decisions behind it.</p>
+      <div class="filters" id="filters" role="group" aria-label="Filter projects by status"></div>
+      <div id="list"></div>
+    </section>
+
+    <section id="case-study" aria-labelledby="case-h">
+      <h2 class="sec" id="case-h">Case study</h2>
+      <div class="case">
+        <div>
+          <h3>Five weeks of empty folders</h3>
+          <p>My media server lost its storage for five weeks and nothing told me. The data was safe the whole time. The fix took an afternoon. The lesson changed the order I build things in.</p>
+          <p class="take">A silent failure is the real bug. Monitoring and startup order come before features.</p>
+        </div>
+        <ol class="timeline">
+          <li>
+            <span class="when">Aug 28 and Sep 11, 2026</span>
+            <span class="what">Two host reboots. The NAS was not up yet, so the network share failed to mount and never retried. The containers started a second later and attached to empty local folders instead.</span>
+          </li>
+          <li>
+            <span class="when">Sep 11 to Oct 16</span>
+            <span class="what">Plex, Jellyfin and the download automation ran against empty libraries. No alert fired. About 3.3 TB of media sat untouched on the NAS.</span>
+          </li>
+          <li>
+            <span class="when">Oct 16</span>
+            <span class="what">Found the cause and fixed it. Moved the share login out of a world-readable file into a root-only credentials file, changed the mount options so boot cannot hang, and made Docker wait up to five minutes for the share before starting containers. Restarted 11 containers and checked each one.</span>
+          </li>
+          <li>
+            <span class="when">Oct 17 to 18</span>
+            <span class="what">Added 15 uptime monitors with phone alerts. Started moving the media onto local ZFS storage so the NAS stops being a boot dependency.</span>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section aria-labelledby="how-h">
+      <h2 class="sec" id="how-h">How I work</h2>
+      <p class="intro">Habits I use in the lab and want to bring to the job.</p>
+      <ul class="principles">
+        <li><strong>Read-only first</strong><span>New access starts read-only and widens one step at a time, with a snapshot before any write.</span></li>
+        <li><strong>Two locks</strong><span>A leaked hostname alone should get nobody anywhere. Edge authentication plus the service's own token.</span></li>
+        <li><strong>Log what acts</strong><span>Tool calls, backups and alerts leave a trail I can read later.</span></li>
+        <li><strong>Pin and review</strong><span>New stacks pin image versions and live in Git. Updates happen on purpose.</span></li>
+        <li><strong>Write it down</strong><span>Every working session leaves a log, and every build gets a runbook.</span></li>
+      </ul>
+    </section>
+
+    <section id="experience" aria-labelledby="exp-h">
+      <h2 class="sec" id="exp-h">Experience</h2>
+      <div class="job" style="margin-top:16px">
+        <div class="meta"><b>Hillwood, a Perot company</b>2026 to present</div>
+        <div>
+          <h3>Cyber Operations Analyst</h3>
+          <ul>
+            <li>Work the first-line security queue, triaging alerts and reporting on vulnerabilities.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="job">
+        <div class="meta"><b>Hillwood, via GuideIT</b>About 3 years</div>
+        <div>
+          <h3>Deskside Support, intern to Senior Analyst</h3>
+          <ul>
+            <li>Supported a 400+ user environment across 20+ locations, working incidents, requests and changes.</li>
+            <li>Worked with Active Directory and mobile device management as part of day-to-day end-user computing support.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="credentials" aria-labelledby="cred-h">
+      <h2 class="sec" id="cred-h">Credentials</h2>
+      <div class="cols" style="margin-top:16px">
+        <div>
+          <h3>Education</h3>
+          <ul class="edu">
+            <li><b>B.S. Information Technology, WGU</b><span>In progress. Enrolled July 2026, with 9 courses transferred in through certifications.</span></li>
+            <li><b>IT certificate, with honors</b><span>Dallas College and Year Up United</span></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Certifications</h3>
+          <ul class="certs" id="certs"></ul>
+          <p class="legend"><span><i class="moon s-live"></i>Earned</span><span><i class="moon s-planned"></i>Scheduled</span></p>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="off-h">
+      <h2 class="sec" id="off-h">Off the clock</h2>
+      <ul class="chips" style="margin-top:16px">
+        <li>Electronic music and festivals</li>
+        <li>Mechanical keyboards</li>
+        <li>PC gaming</li>
+        <li>Working toward a private pilot license</li>
+        <li>Video content</li>
+      </ul>
+      <p class="note">Everything in my lab ends in -lome, from Cloudalome to Medialome. It is a naming convention I keep across every VM, disk and stack.</p>
+    </section>
+
+    <section id="contact" aria-labelledby="contact-h" hidden>
+      <h2 class="sec" id="contact-h">Contact</h2>
+      <div class="links" id="links"></div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span id="foot-updated"></span>
+    <span>Alexander Ortiz</span>
+  </footer>
+</div>
+
+<script>
+/* Edit this block to update the site. Add contact links to CONFIG.contact and they appear automatically. */
+var CONFIG = {
+  updated: "2026-10-18",
+  contact: { email: "aortizco@outlook.com", linkedin: "https://www.linkedin.com/in/alexander-ortiz-it", github: "" }
+};
+
+var PROJECTS = [
+  {
+    name: "Homelome MCP portal", status: "live", area: "Lab", since: "Oct 2026",
+    summary: "Lets Claude read my Proxmox and Docker environment from anywhere, with no ports open on my home network.",
+    points: [
+      "Self-hosted MCP servers for Proxmox and Portainer, published through a Cloudflare Tunnel so nothing on the LAN accepts inbound connections.",
+      "Two locks on every server: a Cloudflare Access service token at the edge plus the server's own bearer token. Portal sign-in is limited to my email.",
+      "Read-only by design. 29 of 54 Proxmox tools are switched off, and the Portainer server runs in read-only mode.",
+      "The servers sit on their own isolated network segment behind my firewall VM, so a compromised container cannot reach the rest of the LAN.",
+      "Every tool call is logged with time, server, user and tool name."
+    ],
+    stack: ["Cloudflare Zero Trust", "Cloudflare Tunnel", "MCP", "Docker", "Proxmox", "Portainer"]
+  },
+  {
+    name: "Monitoring and phone alerts", status: "live", area: "Lab", since: "Oct 2026",
+    summary: "Uptime Kuma checks 15 services and pushes alerts to my phone, built after a five-week outage went unnoticed.",
+    points: [
+      "Monitors cover the media apps, the Proxmox host, the NAS, the firewall gateway and internet reachability.",
+      "Proxmox warnings and errors, including storage events, go to the same phone channel.",
+      "Tested end to end with a ping from each source before I trusted it."
+    ],
+    stack: ["Uptime Kuma", "ntfy", "Proxmox notifications"]
+  },
+  {
+    name: "Backups with Proxmox Backup Server", status: "live", area: "Lab",
+    summary: "Nightly snapshot backups of every VM, checked daily and copied to a second device.",
+    points: [
+      "Nightly backup job with a retention schedule, plus a daily verification job that re-checks old backups.",
+      "A daily sync copies the backup store to a second device. Archive had gone stale for months before I found and fixed it.",
+      "Large, replaceable media storage is excluded from backups on purpose, so backup space goes to what matters.",
+      "Next: a restore drill, because a backup you have not restored is a guess."
+    ],
+    stack: ["Proxmox Backup Server", "ZFS", "Synology NAS"]
+  },
+  {
+    name: "Private cloud behind Cloudflare Access", status: "live", area: "Lab",
+    summary: "My own file sync service, reachable from anywhere and restricted to one identity.",
+    points: [
+      "Synology Drive published through a Cloudflare Tunnel, with an Access policy that allows only my email.",
+      "WireGuard is the fallback path for remote access.",
+      "The same tunnel and Access pattern later became the foundation for the MCP portal."
+    ],
+    stack: ["Synology Drive", "Cloudflare Tunnel", "Cloudflare Access", "WireGuard"]
+  },
+  {
+    name: "Arralome media stack rebuild", status: "building", area: "Lab", since: "Oct 2026",
+    summary: "Rebuilding my media and download automation as one Git-managed stack on a 6 TB ZFS-backed disk.",
+    points: [
+      "One shared data mount so downloads move into the library as instant hardlinks instead of network copies.",
+      "Image versions pinned, secrets kept only in an environment file on the host, and the whole stack in Git.",
+      "Quality profiles from the TRaSH Guides applied with Recyclarr, instead of grabbing whatever a search returns.",
+      "The existing 3.3 TB library is adopted in place, and the download client runs behind a VPN container with a kill switch."
+    ],
+    stack: ["Docker Compose", "ZFS", "Git", "Sonarr and Radarr", "Recyclarr", "Gluetun"]
+  },
+  {
+    name: "WGU B.S. Information Technology", status: "building", area: "Learning", since: "Jul 2026",
+    summary: "An accelerated degree plan built on top of my certifications.",
+    points: [
+      "9 courses transferred in through certifications I already held.",
+      "Courses ordered by prerequisite chain so the slowest ones start first."
+    ],
+    stack: ["WGU", "Accelerated plan"]
+  },
+  {
+    name: "Gamelome game server VM", status: "planned", area: "Lab",
+    summary: "Moving the Minecraft and Palworld servers onto their own VM so they stop competing with the media stack.",
+    points: [
+      "The media VM runs close to its memory limit with the game servers on it.",
+      "A separate VM gives each workload its own limits, backups and restarts."
+    ],
+    stack: ["Proxmox", "Docker"]
+  },
+  {
+    name: "Read-only OPNsense MCP server", status: "planned", area: "Lab",
+    summary: "A small custom MCP server so Claude can inspect my firewall without being able to change it.",
+    points: [
+      "About six read-only tools: interfaces, rules, aliases, gateway status, DHCP leases and the firewall log.",
+      "Written myself because the community option has no authentication of its own in HTTP mode.",
+      "Backed by an OPNsense API user limited to the pages those tools read."
+    ],
+    stack: ["TypeScript", "MCP SDK", "OPNsense API"]
+  }
+];
+
+var STATUS = {
+  live: { label: "Live", desc: "Running today" },
+  building: { label: "Building", desc: "In progress" },
+  planned: { label: "Planned", desc: "Decided, not started" }
+};
+
+var CERTS = [
+  { n: "Security+", v: "CompTIA", s: "earned" },
+  { n: "Network+", v: "CompTIA", s: "earned" },
+  { n: "Cloud+", v: "CompTIA", s: "earned" },
+  { n: "Project+", v: "CompTIA", s: "earned" },
+  { n: "AWS CCP", v: "Amazon Web Services", s: "earned" },
+  { n: "AZ-900", v: "Microsoft", s: "earned" },
+  { n: "ITIL 4", v: "", s: "earned" },
+  { n: "Linux Essentials", v: "LPI", s: "earned" },
+  { n: "SC-300", v: "Microsoft Identity and Access Administrator", s: "planned" }
+];
+
+function count(s) {
+  return PROJECTS.filter(function (p) { return p.status === s; }).length;
+}
+
+function fmtDate(iso) {
+  var d = new Date(iso + "T12:00:00Z");
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
+}
+
+function renderBoard() {
+  var html = "";
+  Object.keys(STATUS).forEach(function (k) {
+    html += '<li class="s-' + k + '"><i class="moon s-' + k + '" aria-hidden="true"></i>' +
+      '<span class="lbl">' + STATUS[k].label + '<span class="desc">' + STATUS[k].desc + '</span></span>' +
+      '<span class="num">' + count(k) + '</span></li>';
+  });
+  document.getElementById("board").innerHTML = html;
+  var u = "Last updated " + fmtDate(CONFIG.updated);
+  document.getElementById("updated").textContent = u;
+  document.getElementById("foot-updated").textContent = u;
+}
+
+function renderList() {
+  var html = "";
+  PROJECTS.forEach(function (p) {
+    html += '<details class="proj s-' + p.status + '" data-status="' + p.status + '">' +
+      '<summary><i class="moon s-' + p.status + '" aria-hidden="true"></i>' +
+      '<div><div class="pname">' + p.name + '</div><div class="psum">' + p.summary + '</div></div>' +
+      '<div class="pmeta"><span>' + p.area + '</span><span class="st">' + STATUS[p.status].label + '</span></div></summary>' +
+      '<div class="pbody">' +
+      (p.since ? '<p class="since">Started ' + p.since + '</p>' : '') +
+      '<ul>' + p.points.map(function (x) { return "<li>" + x + "</li>"; }).join("") + '</ul>' +
+      '<ul class="stack">' + p.stack.map(function (x) { return "<li>" + x + "</li>"; }).join("") + '</ul>' +
+      '</div></details>';
+  });
+  document.getElementById("list").innerHTML = html;
+}
+
+function renderFilters() {
+  var wrap = document.getElementById("filters");
+  var opts = [{ k: "all", label: "All", n: PROJECTS.length }];
+  Object.keys(STATUS).forEach(function (k) { opts.push({ k: k, label: STATUS[k].label, n: count(k) }); });
+  wrap.innerHTML = opts.map(function (o, i) {
+    return '<button type="button" class="fbtn" data-f="' + o.k + '" aria-pressed="' + (i === 0) + '">' +
+      o.label + ' <span class="ct">' + o.n + '</span></button>';
+  }).join("");
+  wrap.addEventListener("click", function (e) {
+    var b = e.target.closest("button");
+    if (!b) return;
+    var f = b.getAttribute("data-f");
+    wrap.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+    document.querySelectorAll(".proj").forEach(function (el) {
+      el.hidden = !(f === "all" || el.getAttribute("data-status") === f);
+    });
+  });
+}
+
+function renderCerts() {
+  document.getElementById("certs").innerHTML = CERTS.map(function (c) {
+    return '<li class="cert"><i class="moon s-' + (c.s === "earned" ? "live" : "planned") + '" aria-hidden="true"></i>' +
+      '<span><b>' + c.n + '</b>' + (c.v ? '<small>' + c.v + '</small>' : '') + '</span></li>';
+  }).join("");
+}
+
+function renderContact() {
+  var c = CONFIG.contact, out = "";
+  if (c.email) out += '<a href="mailto:' + c.email + '">' + c.email + '</a>';
+  if (c.linkedin) out += '<a href="' + c.linkedin + '" rel="noopener">LinkedIn</a>';
+  if (c.github) out += '<a href="' + c.github + '" rel="noopener">GitHub</a>';
+  if (out) {
+    document.getElementById("links").innerHTML = out;
+    document.getElementById("contact").hidden = false;
+  }
+}
+
+function setupTheme() {
+  var root = document.documentElement;
+  try {
+    var saved = localStorage.getItem("ao-theme");
+    if (saved === "light" || saved === "dark") root.setAttribute("data-theme", saved);
+  } catch (e) {}
+  document.getElementById("theme").addEventListener("click", function () {
+    var cur = root.getAttribute("data-theme") ||
+      (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+    var next = cur === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem("ao-theme", next); } catch (e) {}
+  });
+}
+
+renderBoard();
+renderList();
+renderFilters();
+renderCerts();
+renderContact();
+setupTheme();
+</script>
