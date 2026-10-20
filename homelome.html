@@ -3,16 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="A public-safe visual field guide to Alexander Ortiz's Homelome: a small, security-minded Proxmox homelab.">
+  <meta name="description" content="A public-safe visual guide to generic home-technology roles, boundaries, and relationships.">
   <title>Homelome · Field guide</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=IBM+a media player+Mono:wght@400;500&family=IBM+a media player+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
       color-scheme: dark;
       --ink:#f3f5fb; --muted:#a4aec1; --muted-2:#77849b; --night:#080c16; --panel:#111827cc;
-      --panel-solid:#111827; --panel-2:#18223a; --line:#2a3854; --lime:#9ef0bf; --gold:#f0d692;
+      --panel-solid:#111827; --panel-2:#18223a; --line:#2a3854; --lime:#86e2c4; --gold:#ede6c4;
       --violet:#bda8ff; --rose:#ffb4bd; --blue:#95c7ff; --display:"Bricolage Grotesque",system-ui,sans-serif;
       --sans:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
     }
@@ -39,7 +39,7 @@
       min-height:82px; display:flex; align-items:center; justify-content:space-between; gap:20px;
       position:sticky; top:0; z-index:20; border-bottom:1px solid #ffffff0d; backdrop-filter:blur(18px);
     }
-    .top::before { content:""; background:#090e1dcc; position:absolute; inset:0 -100vw; z-index:-1; border-bottom:1px solid #ffffff0d; }
+    .top::before { content:""; background:#090e1dcc; position:absolute; inset:0; z-index:-1; border-bottom:1px solid #ffffff0d; }
     .brand,.eyebrow,.tag,.nav,.mini-label,.eyebrow-link { font:500 .74rem var(--mono); letter-spacing:.06em; }
     .brand { color:var(--ink); text-decoration:none; display:flex; gap:10px; align-items:center; white-space:nowrap; }
     .orb { width:15px; height:15px; border:1.5px solid var(--gold); border-radius:50%; background:linear-gradient(90deg,transparent 41%,var(--gold) 42%); display:inline-block; }
@@ -70,8 +70,7 @@
     .atlas-window::after { width:280px; height:280px; left:-130px; bottom:-160px; background:radial-gradient(circle,#8ee3ce28 0,transparent 70%); }
     .panel-top { position:relative; z-index:1; display:flex; justify-content:space-between; gap:12px; align-items:center; }
     .mini-label { color:var(--muted); text-transform:uppercase; }
-    .live-chip { display:inline-flex; gap:7px; align-items:center; padding:5px 9px; border-radius:999px; border:1px solid #9ef0bf54; color:var(--lime); font:500 .67rem var(--mono); }
-    .live-dot { width:7px; height:7px; border-radius:50%; background:var(--lime); box-shadow:0 0 0 5px #9ef0bf1a; }
+    .guide-chip { display:inline-flex; align-items:center; padding:5px 9px; border-radius:999px; border:1px solid var(--line); color:var(--muted); font:500 .67rem var(--mono); }
     .constellation { position:relative; z-index:1; height:260px; margin:14px 0 4px; }
     .orbit { position:absolute; border:1px solid #ffffff1c; border-radius:50%; left:50%; top:50%; transform:translate(-50%,-50%); }
     .orbit.one { width:104px; height:104px; border-color:#bda8ff64; }
@@ -79,8 +78,8 @@
     .orbit.three { width:328px; height:328px; border-color:#ffffff0d; }
     .core {
       position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); display:grid; place-items:center; width:92px; height:92px;
-      border-radius:50%; background:radial-gradient(circle at 35% 30%,#d9ccff,#765ea6 54%,#2d2450 100%); border:1px solid #eee8ff88;
-      color:#171323; text-align:center; font:650 .81rem/1.05 var(--display); box-shadow:0 0 45px #bda8ff70;
+      border-radius:50%; background:radial-gradient(circle at 35% 30%,#f7f2d8,#a8bed6 56%,#516e96 100%); border:1px solid #eee8ff88;
+      color:#132137; text-align:center; font:650 .81rem/1.05 var(--display); box-shadow:0 0 55px #a8bed66b;
     }
     .sat {
       position:absolute; display:flex; align-items:center; gap:8px; color:#e6ebf7; font:500 .71rem var(--mono);
@@ -177,6 +176,11 @@
       .bento { grid-template-columns:1fr 1fr; }
       .bento-card.wide { grid-column:span 2; grid-row:auto; }
       .section-head { grid-template-columns:1fr; gap:4px; }
+      .map { min-width:0; grid-template-columns:minmax(0,1fr); gap:8px; }
+      .flow { min-height:36px; }
+      .flow::before { width:0; height:100%; border-top:0; border-left:1px dashed #f0d6929b; }
+      .flow::after { right:calc(50% - 8px); top:auto; bottom:-11px; transform:rotate(90deg); }
+      .flow span { writing-mode:horizontal-tb; transform:none; padding:2px 8px; }
     }
     @media (max-width:640px) {
       .shell { width:min(100% - 26px,1180px); }
@@ -190,7 +194,7 @@
       .constellation { transform:scale(.84); transform-origin:center; margin-inline:-10%; }
       .directory,.bento,.guardrails { grid-template-columns:1fr; }
       .bento-card.wide { grid-column:auto; }
-      .architecture { overflow-x:auto; padding:16px; }
+      .architecture { padding:16px; }
       .stats { grid-template-columns:1fr; }
       .stat { border-left:0; border-top:1px solid #ffffff16; }
       .stat:first-child { border-top:0; }
@@ -201,26 +205,25 @@
 <body>
   <div class="shell">
     <header class="top">
-      <a class="brand" href="index.html"><i class="orb" aria-hidden="true"></i>lunalome / aortizco</a>
+      <a class="brand" href="index.html"><i class="orb" aria-hidden="true"></i>lunalome / homelome</a>
       <nav class="nav" aria-label="Page navigation">
-        <a href="#atlas">Atlas</a><a href="#architecture">Architecture</a><a href="#fleet">Fleet</a><a href="#evidence">Evidence</a><a href="#notes">Notes</a><a href="index.html">Portfolio</a>
+        <a href="#atlas">Atlas</a><a href="#architecture">Architecture</a><a href="explore.html">Public explorer</a><a href="#fleet">Fleet</a><a href="#evidence">Evidence</a><a href="#notes">Notes</a><a href="index.html">Portfolio</a>
       </nav>
     </header>
 
     <main>
       <section class="hero" aria-labelledby="title">
         <div>
-          <p class="eyebrow">Public-safe field guide · evidence refreshed Oct 19, 2026</p>
+          <p class="eyebrow">Public-safe field guide · generic architecture</p>
           <h1 id="title">Welcome to <span class="soft">Homelome.</span></h1>
           <p class="lede">A small, intentional home network for real media, games, backups, and experiments. Its job is to feel calm from the outside while staying inspectable on the inside.</p>
           <div class="hero-actions">
             <a class="button primary" href="#atlas">Explore the atlas <span aria-hidden="true">↓</span></a>
-            <a class="button" href="#evidence">See the evidence</a>
           </div>
         </div>
 
         <aside class="atlas-window" aria-label="Visual Homelome system map">
-          <div class="panel-top"><span class="mini-label">System constellation</span><span class="live-chip"><i class="live-dot"></i>inventory checked</span></div>
+          <div class="panel-top"><span class="mini-label">System constellation</span><span class="guide-chip">illustrative view</span></div>
           <div class="constellation" aria-hidden="true">
             <div class="orbit three"></div><div class="orbit two"></div><div class="orbit one"></div>
             <svg class="signal-lines" viewBox="0 0 500 260" preserveAspectRatio="none"><line x1="250" y1="130" x2="68" y2="76"></line><line x1="250" y1="130" x2="440" y2="48"></line><line x1="250" y1="130" x2="438" y2="204"></line><line x1="250" y1="130" x2="92" y2="230"></line></svg>
@@ -228,9 +231,9 @@
             <div class="sat a"><i></i>Access</div><div class="sat b"><i></i>Storage</div><div class="sat c"><i></i>Workloads</div><div class="sat d"><i></i>Signals</div>
           </div>
           <div class="snapshot">
-            <div class="snap"><strong>1</strong><span>online compute node</span></div>
-            <div class="snap"><strong>5/6</strong><span>workloads running</span></div>
-            <div class="snap"><strong>4</strong><span>storage backends online</span></div>
+            <div class="snap"><strong>Roles</strong><span>generic system parts</span></div>
+            <div class="snap"><strong>Boundaries</strong><span>design-level view</span></div>
+            <div class="snap"><strong>Evidence</strong><span>not live system state</span></div>
           </div>
         </aside>
       </section>
@@ -240,71 +243,71 @@
         <div class="directory">
           <a class="lens" href="#architecture"><span class="index">01 / ARCHITECTURE</span><div><h3>Boundaries first</h3><p>How access enters, where it stops, and why the lab is not a public cloud.</p></div><span class="go">Open map →</span></a>
           <a class="lens" href="#fleet"><span class="index">02 / FLEET</span><div><h3>Named workloads</h3><p>A role-based lineup for routing, backups, integrations, games, apps, and rollback.</p></div><span class="go">See fleet →</span></a>
-          <a class="lens" href="#storage"><span class="index">03 / STORAGE</span><div><h3>Data with a job</h3><p>Capacity, backup targets, and the difference between an online disk and a restore.</p></div><span class="go">Read the model →</span></a>
+          <a class="lens" href="#storage"><span class="index">03 / STORAGE</span><div><h3>Data with a job</h3><p>Capacity, backup copies, and the difference between storage and recovery evidence.</p></div><span class="go">Read the model →</span></a>
           <a class="lens" href="#access"><span class="index">04 / ACCESS</span><div><h3>Useful, narrow access</h3><p>Identity-aware entry and read-first tools for inspection without a skeleton key.</p></div><span class="go">See guardrails →</span></a>
-          <a class="lens" href="#evidence"><span class="index">05 / SIGNALS</span><div><h3>Receipts over vibes</h3><p>A dated snapshot of what the control plane confirms and what still needs review.</p></div><span class="go">Review evidence →</span></a>
+          <a class="lens" href="#evidence"><span class="index">05 / SIGNALS</span><div><h3>Receipts over vibes</h3><p>How to separate a documented design from an observation or an unknown.</p></div><span class="go">Review evidence →</span></a>
           <a class="lens" href="#notes"><span class="index">06 / FIELD NOTES</span><div><h3>Lessons kept close</h3><p>What changed after real failures, and why the next improvement is often less glamorous.</p></div><span class="go">Read notes →</span></a>
         </div>
       </section>
 
       <section id="architecture" aria-labelledby="architecture-title">
         <div class="section-head"><p class="kicker">02 · architecture</p><div><h2 id="architecture-title">The internet sees a lobby. The lab stays behind the wall.</h2><p class="intro">This is a trust-boundary map, not a network diagram. It deliberately omits addresses, hostnames, routes, credentials, and management URLs.</p></div></div>
-        <div class="architecture" role="img" aria-label="Public-safe topology from approved user through identity-aware edge and outbound tunnel to an isolated integration host and internal read-only services.">
+        <div class="architecture" role="img" aria-label="Illustrative topology from an approved client through an identity-aware edge and outbound tunnel to generic service roles.">
           <div class="map">
-            <article class="zone"><div class="zone-mark"><span>outside</span><span>01</span></div><h3>Approved person or agent</h3><p>A request begins with an authenticated human or approved assistant.</p><div class="node"><i></i><div><b>Browser / Codex</b><small>Starts a deliberate inspection request.</small></div></div><div class="node"><i style="--node:var(--gold)"></i><div><b>Identity-aware edge</b><small>Checks identity before the lab sees traffic.</small></div></div></article>
+            <article class="zone"><div class="zone-mark"><span>outside</span><span>01</span></div><h3>Approved client</h3><p>A request begins with an authenticated person or approved client.</p><div class="node"><i></i><div><b>Browser or client</b><small>Starts a deliberate request.</small></div></div><div class="node"><i style="--node:var(--gold)"></i><div><b>Identity-aware edge</b><small>Can check identity before a protected service is reached.</small></div></div></article>
             <div class="flow"><span>authenticated HTTPS</span></div>
-            <article class="zone"><div class="zone-mark"><span>transport</span><span>02</span></div><h3>Outbound-only entry</h3><p>The connection originates from inside the lab instead of exposing a management port.</p><div class="node"><i style="--node:var(--lime)"></i><div><b>Cloudflare Tunnel</b><small>Moves an approved request across a controlled edge.</small></div></div><div class="node"><i></i><div><b>MCP portal</b><small>Applies server-level access control and tool scoping.</small></div></div></article>
+            <article class="zone"><div class="zone-mark"><span>transport</span><span>02</span></div><h3>Controlled connection</h3><p>An outbound-originating connection can reduce the need for direct inbound management access.</p><div class="node"><i style="--node:var(--lime)"></i><div><b>Outbound tunnel</b><small>Carries an approved request across a controlled edge.</small></div></div><div class="node"><i></i><div><b>Scoped inspection portal</b><small>Separates access control from service permissions.</small></div></div></article>
             <div class="flow"><span>service auth</span></div>
-            <article class="zone"><div class="zone-mark"><span>homelome</span><span>03</span></div><h3>Segmented service layer</h3><p>Each system has a role and a boundary.</p><div class="node"><i style="--node:var(--blue)"></i><div><b>mcplome</b><small>Isolated host for scoped service integrations.</small></div></div><div class="node"><i style="--node:var(--lime)"></i><div><b>Read-first tools</b><small>Proxmox, Portainer, and Uptime Kuma inspection paths.</small></div></div><div class="node"><i style="--node:var(--rose)"></i><div><b>OPNsensalome</b><small>Firewall and routing boundary for the segment.</small></div></div></article>
+            <article class="zone"><div class="zone-mark"><span>service layer</span><span>03</span></div><h3>Separated roles</h3><p>Each service role has a defined boundary.</p><div class="node"><i style="--node:var(--blue)"></i><div><b>Integration host</b><small>Groups scoped inspection connections.</small></div></div><div class="node"><i style="--node:var(--lime)"></i><div><b>Management tools</b><small>Virtualization, container, and monitoring roles.</small></div></div><div class="node"><i style="--node:var(--rose)"></i><div><b>Network boundary</b><small>Separates and routes service traffic.</small></div></div></article>
           </div>
         </div>
-        <p class="caption">The tunnel originates from the lab; it is not a port forward. <a href="homelome-topology.svg">Download the standalone topology graphic (SVG)</a>.</p>
+        <p class="caption">This diagram illustrates roles and boundaries, not a live route map. <a href="homelome-topology.svg">Download the standalone topology graphic (SVG)</a>.</p>
       </section>
 
       <section id="fleet" aria-labelledby="fleet-title">
-        <div class="section-head"><p class="kicker">03 · fleet</p><div><h2 id="fleet-title">A small fleet where every machine has a reason to exist.</h2><p class="intro">Workloads are separated by role so game servers, media automation, firewalling, backups, and remote inspection do not become one large failure domain.</p></div></div>
+        <div class="section-head"><p class="kicker">03 · fleet</p><div><h2 id="fleet-title">Roles are separated so boundaries stay clear.</h2><p class="intro">Virtualization, network policy, backups, integrations, games, and applications are distinct design roles. This guide intentionally does not publish machine names or runtime status.</p></div></div>
         <div class="bento">
-          <article class="bento-card wide"><div><div class="icon-tile">01</div><h3>One Proxmox core</h3><p>One online compute node is the control plane for the fleet. That makes its capacity, backups, and maintenance windows visible design decisions rather than background chores.</p></div><div class="stack-list"><div><span>Firewall and routing</span><b>OPNsensalome</b></div><div><span>Backup role</span><b>BackupalomeServer</b></div><div><span>Scoped integrations</span><b>mcplome</b></div></div></article>
-          <article class="bento-card"><div class="icon-tile">02</div><h3>Games get space</h3><p>Gamelome is running as a dedicated workload so play does not compete with the app stack by accident.</p></article>
-          <article class="bento-card"><div class="icon-tile">03</div><h3>Apps get ownership</h3><p>Arralome carries the active Docker automation and media services. Its resource headroom is a current review item.</p></article>
-          <article class="bento-card"><div class="icon-tile">04</div><h3>Rollback stays real</h3><p>Medialome is stopped and retained while its future role is refined. Stopped does not mean disposable.</p></article>
-          <article class="bento-card"><div class="icon-tile">05</div><h3>Names are maps</h3><p>The -lome convention is playful, but the names also tell the next maintainer what each service owns.</p></article>
+          <article class="bento-card wide"><div><div class="icon-tile">01</div><h3>Virtualization layer</h3><p>A virtualization layer can separate service roles and make their failure boundaries easier to reason about.</p></div><div class="stack-list"><div><span>Network role</span><b>Firewall and routing</b></div><div><span>Recovery role</span><b>Backup destination</b></div><div><span>Inspection role</span><b>Scoped integrations</b></div></div></article>
+          <article class="bento-card"><div class="icon-tile">02</div><h3>Games get boundaries</h3><p>Interactive workloads can be separated from applications to keep resource and recovery decisions clear.</p></article>
+          <article class="bento-card"><div class="icon-tile">03</div><h3>Applications get ownership</h3><p>Group application roles around their dependencies, data access, and recovery requirements.</p></article>
+          <article class="bento-card"><div class="icon-tile">04</div><h3>Recovery stays deliberate</h3><p>Preserve a documented rollback option; the public guide does not report backup state or restore readiness.</p></article>
+          <article class="bento-card"><div class="icon-tile">05</div><h3>Roles, not inventory</h3><p>Public labels describe general responsibilities rather than machine names or a live system list.</p></article>
         </div>
       </section>
 
       <section id="storage" aria-labelledby="storage-title">
-        <div class="section-head"><p class="kicker">04 · storage</p><div><h2 id="storage-title">Capacity is only useful when recovery has a story too.</h2><p class="intro">Homelome keeps capacity, virtual-machine disks, and backup storage as distinct concerns. A disk being online is a useful signal, but it is not a restore drill.</p></div></div>
+        <div class="section-head"><p class="kicker">04 · storage</p><div><h2 id="storage-title">Capacity is only useful when recovery has a story too.</h2><p class="intro">Capacity, data placement, backup copies, and recovery evidence are distinct concerns. A storage path alone does not demonstrate recoverability.</p></div></div>
         <div class="evidence-grid">
-          <article class="evidence-card"><h3>Four online storage backends</h3><div class="stats"><div class="stat"><strong>ZFS</strong><span>primary capacity pool</span></div><div class="stat"><strong>PBS</strong><span>backup target role</span></div><div class="stat"><strong>Local</strong><span>host and VM volumes</span></div></div><p>Current control-plane data shows ZFS, Proxmox Backup Server, and local volumes online. The operating rule is more demanding: backup coverage needs evidence, and every meaningful recovery plan needs a test.</p></article>
-          <aside class="evidence-card"><h3>What stays under review</h3><ul class="status-list"><li><i class="review"></i><span>Backup inventory needs reconciliation</span><em>REVIEW</em></li><li><i class="review"></i><span>Large data disks use separate protection</span><em>DESIGN</em></li><li><i></i><span>Storage backends currently report online</span><em>OBSERVED</em></li></ul></aside>
+          <article class="evidence-card"><h3>Separate data roles</h3><div class="stats"><div class="stat"><strong>Capacity</strong><span>working storage</span></div><div class="stat"><strong>Copy</strong><span>backup destination</span></div><div class="stat"><strong>Restore</strong><span>recovery evidence</span></div></div><p>Each role needs its own coverage and restore evidence. This public guide does not describe particular storage systems or their current state.</p></article>
+          <aside class="evidence-card"><h3>Recovery questions</h3><ul><li>Which data is included in a copy?</li><li>Is the copy independent of the primary system?</li><li>Has recovery been tested?</li></ul></aside>
         </div>
       </section>
 
       <section id="access" aria-labelledby="access-title">
-        <div class="section-head"><p class="kicker">05 · access</p><div><h2 id="access-title">Useful access needs receipts.</h2><p class="intro">The lab can be inspected remotely without making remote control the default. Authority stays deliberately narrower than curiosity.</p></div></div>
+        <div class="section-head"><p class="kicker">05 · access</p><div><h2 id="access-title">Useful access needs boundaries.</h2><p class="intro">Remote access should be narrower than curiosity. These are general design principles, not a report of current configuration.</p></div></div>
         <div class="guardrails">
-          <article class="rule"><span class="n">01</span><div><h3>Identity at the edge</h3><p>Access is checked before a request enters the home environment.</p></div></article>
-          <article class="rule"><span class="n">02</span><div><h3>Outbound-only transport</h3><p>The tunnel originates inside the lab; raw management ports are not published to the internet.</p></div></article>
-          <article class="rule"><span class="n">03</span><div><h3>Service boundaries remain separate</h3><p>One portal sign-in does not replace every service's own authentication and permissions.</p></div></article>
-          <article class="rule"><span class="n">04</span><div><h3>Read first, write deliberately</h3><p>Inspection and diagnosis are the normal path. Changes require their own scoped decision.</p></div></article>
+          <article class="rule"><span class="n">01</span><div><h3>Identity at the edge</h3><p>An identity-aware boundary can check a request before a protected service is reached.</p></div></article>
+          <article class="rule"><span class="n">02</span><div><h3>Limit inbound exposure</h3><p>Prefer controlled outbound connections over exposing management interfaces directly.</p></div></article>
+          <article class="rule"><span class="n">03</span><div><h3>Separate service permissions</h3><p>One portal sign-in should not replace each service's own authentication and permissions.</p></div></article>
+          <article class="rule"><span class="n">04</span><div><h3>Read first, write deliberately</h3><p>Read-only inspection can be the default. Changes need their own scoped authorization.</p></div></article>
         </div>
       </section>
 
       <section id="evidence" aria-labelledby="evidence-title">
-        <div class="section-head"><p class="kicker">06 · evidence</p><div><h2 id="evidence-title">A dated snapshot, not a status theater.</h2><p class="intro">These labels come from a read-only control-plane check on October 19, 2026. They show what was actually reachable through the connected tools and keep uncertainty visible.</p></div></div>
+        <div class="section-head"><p class="kicker">06 · evidence</p><div><h2 id="evidence-title">Separate design from observation.</h2><p class="intro">A public architecture guide should distinguish a documented design, a dated observation, and an unresolved assumption. This guide publishes no live system state.</p></div></div>
         <div class="evidence-grid">
-          <article class="evidence-card"><h3>Current read-only snapshot</h3><div class="stats"><div class="stat"><strong>20</strong><span>logical CPU cores reported</span></div><div class="stat"><strong>5/6</strong><span>defined VMs running</span></div><div class="stat"><strong>4</strong><span>storage backends online</span></div></div><p>Proxmox returned one online node, its workload inventory, and its storage inventory. It did not establish application health, backup recoverability, or long-term resource trends.</p></article>
-          <aside class="evidence-card"><h3>Connector check</h3><ul class="status-list"><li><i></i><span>Proxmox inventory path responded</span><em>LIVE</em></li><li><i class="review"></i><span>Portainer needs a fresh sign-in</span><em>REVIEW</em></li><li><i class="review"></i><span>Uptime Kuma upstream needs follow-up</span><em>REVIEW</em></li></ul></aside>
+          <article class="evidence-card"><h3>Observation is not health</h3><p>A configuration or inventory record describes what is declared or present. It does not prove the health of every application.</p></article>
+          <aside class="evidence-card"><h3>Recovery requires evidence</h3><p>A configured backup is not a successful restore. Describe the evidence and its limits before claiming recoverability.</p></aside>
         </div>
       </section>
 
       <section id="notes" aria-labelledby="notes-title">
-        <div class="section-head"><p class="kicker">07 · field notes</p><div><h2 id="notes-title">The most important upgrades are usually unglamorous.</h2><p class="intro">The lab is built around the things failures taught me: say what you know, name what you do not, and keep the recovery path shorter than the incident report.</p></div></div>
+        <div class="section-head"><p class="kicker">07 · field notes</p><div><h2 id="notes-title">The most important upgrades are usually unglamorous.</h2><p class="intro">A useful architecture guide says what it knows, names what it does not, and keeps the recovery path clear.</p></div></div>
         <div class="notes-grid">
           <article class="quote-card"><p>Monitoring beats vibes. A service that looks fine on a dashboard can still be broken.</p><span>Operating principle</span></article>
           <div>
             <details><summary>Why publish a public-safe architecture page?</summary><p>Architecture is more useful when it explains decisions. This guide can show the boundaries, roles, and tradeoffs without making the home environment easier to target.</p></details>
-            <details><summary>What counts as verified here?</summary><p>A statement earns that label only when a current read-only check supports it. Historical notes are still valuable, but they are marked as context until a fresh check agrees.</p></details>
+            <details><summary>What counts as evidence?</summary><p>Name the source and observation date. Keep configuration, observed behavior, and unknowns separate.</p></details>
             <details><summary>What happens after an outage?</summary><p>The goal is a small evidence trail: symptom, actual cause, alert behavior, repair, and the guardrail added afterward. That is more useful than a perfect-looking dashboard.</p></details>
           </div>
         </div>

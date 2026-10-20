@@ -1,0 +1,26 @@
+{
+  "files": [
+    "_headers",
+    "HOMEL0ME-NETWORK.md",
+    "assets/homelome-topology.svg",
+    "explore.html",
+    "explorer-data.json",
+    "explorer.css",
+    "explorer.js",
+    "homelome-topology.svg",
+    "homelome.html",
+    "index.html"
+  ],
+  "sha256": {
+    "_headers": "9d6cc373aecf4f1595a45cb76b7fd4c7021215c0e3cccee452dace16f2c75657",
+    "HOMEL0ME-NETWORK.md": "4f293acaec25a6c64afc2183409bd42ef8c8507b9e1257dfc6c6159baeeef30b",
+    "assets/homelome-topology.svg": "8aee97f1820ed25e13c97ebbf66c03c4711637aa30c0412165d1e8948bd1c128",
+    "explore.html": "eb5316b35289312436e8cb4bee839c89a8572d17c5af993a2d10d9ae2a82c649",
+    "explorer-data.json": "cf45585476c0fe63eb8485de6e5901b9a6d531c1cfa8a60485f99651e441949d",
+    "explorer.css": "6e86e1d1fb09969b17030cc0bdaa6a011169007ce99d885970a0bfd39728f1f1",
+    "explorer.js": "73b483f0c08acbbe77ca3a20c0d05998fc68b95c137a4e81ee889ded31b1f147",
+    "homelome-topology.svg": "8aee97f1820ed25e13c97ebbf66c03c4711637aa30c0412165d1e8948bd1c128",
+    "homelome.html": "e6fd4791fc2626123792ea06a2bdef1a54c0b74a89d2059e7ee1ba868abdda50",
+    "index.html": "2e86b68f105898f79e7b5322df9513cc3e6fd3cab964b0a58a8d39ff899d2eb6"
+  }
+}
