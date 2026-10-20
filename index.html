@@ -342,41 +342,41 @@ h2.sec { font: 600 clamp(1.5rem, 3.4vw, 2rem)/1.15 var(--f-display); letter-spac
 <script>
 /* Edit this block to update the site. Add contact links to CONFIG.contact and they appear automatically. */
 var CONFIG = {
-  updated: "2026-10-18",
+  updated: "2026-10-19",
   contact: { email: "aortizco@outlook.com", linkedin: "https://www.linkedin.com/in/alexander-ortiz-it", github: "" }
 };
 
 var PROJECTS = [
   {
     name: "Homelome MCP portal", status: "live", area: "Lab", since: "Oct 2026",
-    summary: "Lets Claude read my Proxmox and Docker environment from anywhere, with no ports open on my home network.",
+    summary: "Lets an approved assistant inspect selected Homelome systems remotely through a scoped, read-first design.",
     points: [
-      "Self-hosted MCP servers for Proxmox and Portainer, published through a Cloudflare Tunnel so nothing on the LAN accepts inbound connections.",
-      "Two locks on every server: a Cloudflare Access service token at the edge plus the server's own bearer token. Portal sign-in is limited to my email.",
-      "Read-only by design. 29 of 54 Proxmox tools are switched off, and the Portainer server runs in read-only mode.",
-      "The servers sit on their own isolated network segment behind my firewall VM, so a compromised container cannot reach the rest of the LAN.",
-      "Every tool call is logged with time, server, user and tool name."
+      "Selected service integrations are reached through identity-aware access and an outbound tunnel; direct home-LAN management ports are not exposed.",
+      "The portal and each upstream service retain separate access boundaries.",
+      "The current workflow is inspection and diagnosis. Any change authority stays explicit and scoped.",
+      "The integration host uses a dedicated segment behind the firewall boundary.",
+      "Public field notes document evidence and uncertainty without exposing the implementation."
     ],
     stack: ["Cloudflare Zero Trust", "Cloudflare Tunnel", "MCP", "Docker", "Proxmox", "Portainer"]
   },
   {
-    name: "Monitoring and phone alerts", status: "live", area: "Lab", since: "Oct 2026",
-    summary: "Uptime Kuma checks 15 services and pushes alerts to my phone, built after a five-week outage went unnoticed.",
+    name: "Monitoring and phone alerts", status: "building", area: "Lab", since: "Oct 2026",
+    summary: "Recovering monitoring visibility and validating alert delivery after an earlier silent failure.",
     points: [
-      "Monitors cover the media apps, the Proxmox host, the NAS, the firewall gateway and internet reachability.",
-      "Proxmox warnings and errors, including storage events, go to the same phone channel.",
-      "Tested end to end with a ping from each source before I trusted it."
+      "The intended scope covers service health, host and storage signals, network reachability, and recovery jobs.",
+      "The current Uptime Kuma MCP path needs follow-up, so monitor state and delivery are not being represented as live here.",
+      "Next: validate a real monitor, notification path, and documented escalation loop."
     ],
     stack: ["Uptime Kuma", "ntfy", "Proxmox notifications"]
   },
   {
-    name: "Backups with Proxmox Backup Server", status: "live", area: "Lab",
-    summary: "Nightly snapshot backups of every VM, checked daily and copied to a second device.",
+    name: "Backups with Proxmox Backup Server", status: "building", area: "Lab",
+    summary: "Reconciling backup evidence and preparing a real restore drill for the workloads that matter.",
     points: [
-      "Nightly backup job with a retention schedule, plus a daily verification job that re-checks old backups.",
-      "A daily sync copies the backup store to a second device. Archive had gone stale for months before I found and fixed it.",
-      "Large, replaceable media storage is excluded from backups on purpose, so backup space goes to what matters.",
-      "Next: a restore drill, because a backup you have not restored is a guess."
+      "The backup target is online, but the current inventory still needs reconciliation with retention and job evidence.",
+      "Large data disks may need a separate protection plan from VM operating-system disks.",
+      "An online pool is not a verified backup, and a completed backup is not a proven recovery until a restore is tested.",
+      "Next: record a restore drill with clear evidence and recovery timing."
     ],
     stack: ["Proxmox Backup Server", "ZFS", "Synology NAS"]
   },
@@ -411,11 +411,10 @@ var PROJECTS = [
     stack: ["WGU", "Accelerated plan"]
   },
   {
-    name: "Gamelome game server VM", status: "planned", area: "Lab",
-    summary: "Moving the Minecraft and Palworld servers onto their own VM so they stop competing with the media stack.",
+    name: "Gamelome game server VM", status: "live", area: "Lab", since: "Oct 2026",
+    summary: "A dedicated game workload that keeps game-server resource use away from the active application stack.",
     points: [
-      "The media VM runs close to its memory limit with the game servers on it.",
-      "A separate VM gives each workload its own limits, backups and restarts."
+      "Gamelome is running as its own workload with separate assigned resources.", "Its next improvements are about backup coverage and repeatable recovery, not collapsing it back into the app stack."
     ],
     stack: ["Proxmox", "Docker"]
   },
@@ -546,3 +545,5 @@ renderCerts();
 renderContact();
 setupTheme();
 </script>
+
+

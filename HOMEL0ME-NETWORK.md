@@ -1,78 +1,98 @@
 # Homelome network field guide
 
 **Audience:** portfolio reviewers, future Alex, and anyone inheriting the lab.  
-**Scope:** public-safe topology and operating notes. No addresses, hostnames, credentials, API keys, serial numbers, or private service URLs belong in this document.
+**Scope:** public-safe topology and operating notes. No addresses, hostnames, credentials, API keys, serial numbers, raw logs, or private service URLs belong in this document.  
+**Evidence refresh:** 2026-10-19, using read-only control-plane queries and a local documentation review.
 
 ## One-minute overview
 
-Homelome is a single-node Proxmox homelab that separates firewall, backup, remote-inspection, game, and Docker automation workloads into named virtual machines. Public access follows an identity-aware, outbound-only pattern: Cloudflare Access authenticates the request, Cloudflare Tunnel carries it inward, and the MCP portal exposes narrowly scoped, read-only tools to selected upstream services.
+Homelome is a single-node Proxmox homelab that separates firewall, backup, remote-inspection, game, and application workloads into named virtual machines. Public access follows an identity-aware, outbound-only pattern: an approved request reaches the edge first, a tunnel carries it inward, and a portal exposes narrowly scoped inspection tools to selected services.
+
+The purpose is practical: make a home system useful without making its management plane public, and make its current state explainable without pretending that every signal is a guarantee.
+
+## Start with the atlas
+
+| Lens | What it explains |
+|---|---|
+| Architecture | The route from an approved request to a scoped internal service. |
+| Fleet | The role of each named workload and why those roles stay separate. |
+| Storage | The distinction between online capacity, backup coverage, and restore evidence. |
+| Access | Identity, outbound transport, separate service authentication, and read-first tooling. |
+| Evidence | What the latest control-plane check actually confirmed. |
+| Field notes | The operating principles formed by real failure and recovery work. |
 
 ## Topology
 
-```text
-Approved user / Codex
-        |
-        | authenticated HTTPS
-        v
-Cloudflare Access + MCP portal
-        |
-        | Cloudflare Tunnel (outbound from the lab)
-        v
-mcplome — isolated MCP service VM
-        |
-        | service-specific auth + firewall policy
-        v
+Approved user or agent  
+↓ authenticated request  
+Identity-aware edge and MCP portal  
+↓ outbound tunnel from the lab  
+mcplome — scoped integration host  
+↓ service-specific authentication  
 Proxmox · Portainer · Uptime Kuma
 
-OPNsensalome is the firewall and routing boundary for the isolated MCP segment.
-```
+OPNsensalome is the firewall and routing boundary for the isolated integration segment.
 
-## Verified October 19, 2026
+The public diagram describes trust boundaries and traffic direction, not a route map. The tunnel originates inside Homelome; it is not a port forward.
 
-| Area | Finding |
-|---|---|
-| Hypervisor | One online Proxmox node with 20 logical CPU cores and 46.67 GiB available memory. |
-| Virtual machines | BackupalomeServer, OPNsensalome, mcplome, Gamelome, and Arralome were running. Medialome was stopped. |
-| Storage | Backupalome (PBS), RAIDZalome (ZFS), local, and local-lvm were online. |
-| Segmentation | A dedicated bridge exists for the MCP island with no physical bridge ports; OPNsense is the only intended router. |
-| MCP portal | Portainer, Proxmox, and Uptime Kuma are enabled in the portal. |
+## Current evidence snapshot
+
+The latest read-only discovery confirmed:
+
+| Area | Finding | Confidence |
+|---|---|---|
+| Hypervisor | One Proxmox node is online with 20 logical CPU cores reported. | validated |
+| Workloads | BackupalomeServer, OPNsensalome, mcplome, Gamelome, and Arralome were running. Medialome was stopped. | validated |
+| Storage | Backupalome, RAIDZalome, local, and local-lvm reported online. | validated |
+| MCP portal | Proxmox, Portainer, and Uptime Kuma were enabled in the portal. | observed |
+| Proxmox path | The inventory, VM, and storage requests completed. | validated |
+| Portainer path | A fresh sign-in is required before its endpoint inventory can be read. | needs review |
+| Uptime Kuma path | The monitor-summary request returned an upstream HTTP 502. | needs review |
+
+This is a dated infrastructure snapshot, not an uptime claim. It does not prove application health, alert delivery, successful backups, or restore readiness.
 
 ## Workload roles
 
 | Workload | Job | Boundary |
 |---|---|---|
-| OPNsensalome | Firewall and routing | Controls the MCP segment's path to internal services and the internet. |
-| BackupalomeServer | Backup target | Keeps backup storage distinct from primary workloads. |
-| mcplome | MCP service host | Runs the tunnel and service-specific MCP containers. |
-| Gamelome | Game workloads | Keeps game resource use from colliding with automation services. |
-| Arralome | Docker automation and media services | Hosts the active container ecosystem. |
-| Medialome | Dedicated media workload | Present but currently stopped while its role is refined. |
+| OPNsensalome | Firewall and routing | Controls the isolated integration segment's path to internal services and the internet. |
+| BackupalomeServer | Backup role | Keeps backup storage distinct from primary workloads. |
+| mcplome | Scoped integration host | Runs the tunnel and service-specific inspection containers. |
+| Gamelome | Game workloads | Keeps game resource use away from the application stack. |
+| Arralome | Docker automation and media services | Hosts the active application ecosystem. |
+| Medialome | Retained media workload | Preserved in a stopped state while its role is refined. |
 
 ## Security model
 
-1. **Identity gate:** Cloudflare Access restricts portal access before a request enters the home environment.
-2. **No direct inbound management exposure:** Cloudflare Tunnel originates inside the lab.
-3. **Two boundaries per service:** access to the portal is separate from each service's own authentication.
-4. **Least privilege:** current MCP use is read-first. The intended workflow is inspect, diagnose, present evidence, then require deliberate authority for changes.
-5. **Network separation:** MCP containers operate on a separate segment, routed through the firewall rather than granted broad LAN access.
+1. **Identity gate:** Access is verified before a request reaches the home environment.
+2. **No direct inbound management exposure:** the tunnel starts from inside the lab.
+3. **Two boundaries per service:** portal access is separate from each service's own authentication and permissions.
+4. **Least privilege:** the current MCP workflow is read-first. Inspect, diagnose, present evidence, then make any change authority explicit.
+5. **Network separation:** integrations are segmented and routed through the firewall rather than given broad LAN access.
+6. **Public/private split:** this guide explains the design while private operations documentation holds implementation details.
 
-## Current operational notes
+## Data and recovery model
 
-- The Proxmox MCP path was reachable during the live review.
-- Portainer required a portal re-authentication after an earlier successful read.
-- The Uptime Kuma MCP path timed out while authenticating to its upstream service and later returned HTTP 502. This proves an MCP-to-upstream problem, not that Uptime Kuma itself is offline.
-- One Docker-focused VM is using a high proportion of its assigned RAM. Confirm trends and container limits before adding workload.
+The current control plane reports ZFS capacity, a Proxmox Backup Server target, and local storage online. That gives the lab a useful foundation, but it does not make the phrase "fully backed up" true by itself.
 
-## Evidence and maintenance cadence
+The working standard is simple:
 
-| Cadence | Action |
+- An online pool is not a verified backup.
+- A completed backup is not a proven recovery until a restore is tested.
+- Large data stores may need protection that differs from VM operating-system disks.
+- Capacity and recovery deserve separate, dated evidence.
+
+## Maintenance rhythm
+
+| When | Practice |
 |---|---|
-| Daily | Check backup job outcomes and monitoring state. |
-| Monthly | Review image and service updates intentionally; rotate/review remote-access credentials according to the operational runbook. |
-| Per change | Snapshot or back up first, apply one scoped change, then verify with a real service check. |
-| Per outage | Record the symptom, the actual cause, the alert behavior, and the permanent guardrail added afterward. |
+| Before a change | Capture evidence, back up or snapshot where appropriate, and state the rollback point. |
+| After a change | Check a real service path, not just whether a dashboard looks green. |
+| Monthly | Review updates, remote-access boundaries, storage headroom, and documentation drift. |
+| After an incident | Record the symptom, the root cause, alert behavior, repair, and permanent guardrail. |
 
 ## Public documentation rules
 
-Keep the portfolio version focused on design, risk decisions, and verified outcomes. Keep the operational runbook private. Never publish LAN addresses, access-policy details, Cloudflare service tokens, private hostnames, raw logs, hardware identifiers, or service credentials.
+Keep the public version focused on role, design, risk decisions, and verified outcomes. Keep operational configuration private. Never publish network addresses, private hostnames, access-policy details, tokens, raw logs, hardware identifiers, or service credentials.
 
+The accompanying visual guide is available at [Homelome field guide](homelome.html).
