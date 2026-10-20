@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A public-safe field guide to Alexander Ortiz's Homelome: a small, security-minded Proxmox homelab.">
+  <title>Homelome · Field guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root { color-scheme: dark; --ink:#edf0f7; --muted:#a5afc4; --night:#090d19; --panel:#111827; --panel2:#161f32; --line:#283652; --lime:#82e0b5; --gold:#e9ca81; --violet:#b9a2ff; --red:#ff9a9e; --mono:"IBM Plex Mono",ui-monospace,monospace; --sans:"IBM Plex Sans",system-ui,sans-serif; --display:"Bricolage Grotesque",system-ui,sans-serif; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; color:var(--ink); font:400 16px/1.65 var(--sans); background:radial-gradient(circle at 80% -8%,#1f2850 0,transparent 28rem),var(--night); }
+    a { color:var(--gold); text-underline-offset:3px; }
+    a:hover { color:var(--ink); }
+    :focus-visible { outline:2px solid var(--gold); outline-offset:4px; }
+    .shell { width:min(1160px,calc(100% - 32px)); margin:auto; }
+    .top { min-height:74px; display:flex; align-items:center; justify-content:space-between; gap:20px; border-bottom:1px solid var(--line); }
+    .brand,.eyebrow,.tag,.nav { font:500 .78rem var(--mono); letter-spacing:.04em; }
+    .brand { color:var(--ink); text-decoration:none; display:flex; gap:9px; align-items:center; }
+    .orb { width:14px; height:14px; border:1.5px solid var(--gold); border-radius:50%; background:linear-gradient(90deg,transparent 42%,var(--gold) 43%); display:inline-block; }
+    .nav { display:flex; flex-wrap:wrap; gap:16px; }
+    .nav a { color:var(--muted); text-decoration:none; }
+    .nav a:hover { color:var(--ink); }
+    .hero { display:grid; grid-template-columns:1.15fr .85fr; gap:48px; padding:82px 0 64px; }
+    .eyebrow { color:var(--gold); text-transform:uppercase; margin:0 0 13px; }
+    h1,h2,h3,p { margin-top:0; }
+    h1 { font:700 clamp(3.2rem,8vw,6.7rem)/.91 var(--display); letter-spacing:-.055em; margin-bottom:22px; }
+    h1 .soft { color:var(--violet); }
+    .lede { font-size:1.14rem; color:#d4daea; max-width:56ch; }
+    .hero-notes { display:flex; flex-wrap:wrap; gap:8px; margin-top:24px; }
+    .tag { color:var(--muted); border:1px solid var(--line); border-radius:999px; padding:5px 10px; }
+    .pulse { align-self:end; padding:22px; background:linear-gradient(135deg,var(--panel2),var(--panel)); border:1px solid var(--line); border-radius:16px; box-shadow:0 24px 60px #0004; }
+    .pulse h2 { font:500 .75rem var(--mono); color:var(--muted); letter-spacing:.09em; text-transform:uppercase; margin-bottom:14px; }
+    .metric { display:grid; grid-template-columns:38px 1fr auto; gap:12px; align-items:center; padding:13px 0; border-top:1px solid var(--line); }
+    .metric:first-of-type { border-top:0; }
+    .dot { width:10px; height:10px; border-radius:50%; background:var(--lime); box-shadow:0 0 0 5px #82e0b51a; }
+    .dot.warn { background:var(--gold); box-shadow:0 0 0 5px #e9ca811a; }
+    .metric b { display:block; font-size:.96rem; }
+    .metric span { color:var(--muted); font-size:.8rem; }
+    .metric em { font:500 .74rem var(--mono); color:var(--lime); font-style:normal; }
+    .metric em.warn { color:var(--gold); }
+    section { padding:54px 0; border-top:1px solid var(--line); }
+    .sec-head { display:grid; grid-template-columns:210px 1fr; gap:28px; margin-bottom:26px; }
+    .kicker { font:500 .72rem var(--mono); color:var(--gold); text-transform:uppercase; letter-spacing:.09em; padding-top:8px; }
+    h2 { font:650 clamp(1.9rem,4vw,3rem)/1.06 var(--display); letter-spacing:-.035em; margin-bottom:9px; }
+    .intro { color:var(--muted); max-width:68ch; }
+    .map { position:relative; overflow:hidden; padding:20px; border:1px solid var(--line); border-radius:16px; background:linear-gradient(135deg,#0d1424,#11192b); }
+    .map::before { content:""; position:absolute; inset:0; opacity:.2; background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px); background-size:28px 28px; pointer-events:none; }
+    .map-inner { position:relative; display:grid; grid-template-columns:1fr 48px 1.15fr 48px 1.2fr; align-items:stretch; min-width:700px; }
+    .zone { padding:18px; border:1px solid var(--line); border-radius:12px; background:#0d1525e8; }
+    .zone h3 { font:600 1rem var(--display); margin-bottom:3px; }
+    .zone p { font-size:.8rem; color:var(--muted); margin-bottom:13px; }
+    .node { display:flex; gap:9px; align-items:flex-start; padding:10px 0; border-top:1px solid var(--line); font-size:.86rem; }
+    .node:first-of-type { border-top:0; }
+    .node i { width:9px; height:9px; margin-top:6px; border-radius:50%; background:var(--violet); flex:none; }
+    .node strong { display:block; font-weight:600; }
+    .node small { color:var(--muted); display:block; line-height:1.35; }
+    .line { position:relative; display:flex; align-items:center; justify-content:center; }
+    .line::before { content:""; width:100%; border-top:1px dashed var(--gold); }
+    .line::after { content:"›"; color:var(--gold); font-size:1.6rem; position:absolute; right:2px; top:calc(50% - 18px); }
+    .line span { position:absolute; writing-mode:vertical-rl; transform:rotate(180deg); font:500 .64rem var(--mono); color:var(--muted); background:var(--night); padding:6px 2px; }
+    .caption { color:var(--muted); font-size:.8rem; margin:16px 2px 0; }
+    .cards { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+    .card { border:1px solid var(--line); border-radius:12px; padding:18px; background:var(--panel); }
+    .card .num { font:600 2rem/1 var(--display); color:var(--violet); margin-bottom:9px; }
+    .card h3 { font:600 1rem var(--display); margin-bottom:5px; }
+    .card p { color:var(--muted); font-size:.88rem; margin:0; }
+    .grid { display:grid; grid-template-columns:1.1fr .9fr; gap:32px; }
+    .table { border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+    .row { display:grid; grid-template-columns:1.1fr 1fr .7fr; gap:14px; padding:13px 16px; border-top:1px solid var(--line); font-size:.88rem; }
+    .row:first-child { border-top:0; }
+    .row.head { background:#172238; color:var(--muted); font:500 .7rem var(--mono); text-transform:uppercase; letter-spacing:.07em; }
+    .row span:last-child { color:var(--muted); }
+    .callout { padding:22px; border-radius:12px; background:#e9ca8112; border:1px solid #e9ca8140; }
+    .callout h3 { font:600 1.18rem var(--display); margin-bottom:8px; }
+    .callout p:last-child { margin-bottom:0; color:#d5d9e2; }
+    .steps { list-style:none; padding:0; margin:0; display:grid; gap:10px; }
+    .steps li { display:grid; grid-template-columns:30px 1fr; gap:12px; padding:14px 0; border-bottom:1px solid var(--line); }
+    .steps li:last-child { border-bottom:0; }
+    .step { width:26px; height:26px; border:1px solid var(--violet); color:var(--violet); display:grid; place-items:center; border-radius:50%; font:500 .72rem var(--mono); }
+    .steps b { display:block; margin-bottom:2px; }
+    .steps span { color:var(--muted); font-size:.88rem; }
+    .principles { display:grid; grid-template-columns:repeat(2,1fr); gap:0 28px; list-style:none; padding:0; }
+    .principles li { border-top:1px solid var(--line); padding:16px 0; }
+    .principles b { display:block; font:600 1.08rem var(--display); margin-bottom:4px; }
+    .principles span { color:var(--muted); font-size:.9rem; }
+    details { border:1px solid var(--line); border-radius:10px; padding:0 16px; background:var(--panel); }
+    summary { padding:15px 0; cursor:pointer; font-weight:600; }
+    details p,details ul { color:var(--muted); font-size:.9rem; }
+    details ul { padding-left:18px; }
+    .foot { padding:28px 0 42px; border-top:1px solid var(--line); display:flex; justify-content:space-between; gap:18px; flex-wrap:wrap; color:var(--muted); font:400 .76rem var(--mono); }
+    @media (max-width:760px) { .hero,.grid,.sec-head { grid-template-columns:1fr; gap:22px; padding-block:42px; } .cards,.principles { grid-template-columns:1fr; } .map { overflow-x:auto; } .top { padding:14px 0; } .nav { gap:10px; } .row { grid-template-columns:1fr; gap:3px; } .row.head { display:none; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="top">
+      <a class="brand" href="index.html"><i class="orb" aria-hidden="true"></i>lunalome / aortizco</a>
+      <nav class="nav" aria-label="Page navigation"><a href="#map">Map</a><a href="#systems">Systems</a><a href="#guardrails">Guardrails</a><a href="#notes">Notes</a><a href="index.html">Portfolio</a></nav>
+    </header>
+    <main>
+      <section class="hero" aria-labelledby="title">
+        <div>
+          <p class="eyebrow">Public-safe field guide · updated Oct 19, 2026</p>
+          <h1 id="title">Welcome to<br><span class="soft">Homelome.</span></h1>
+          <p class="lede">A small, intentional home network built to be useful, observable, and a little over-documented. It runs real media, games, backups, and experiments—without turning the house into an exposed cloud provider.</p>
+          <div class="hero-notes"><span class="tag">single-node Proxmox</span><span class="tag">read-only MCP</span><span class="tag">Cloudflare Access</span><span class="tag">ZFS-backed storage</span></div>
+        </div>
+        <aside class="pulse" aria-label="Live infrastructure snapshot">
+          <h2>Live snapshot</h2>
+          <div class="metric"><i class="dot"></i><div><b>Compute node</b><span>20 logical CPU cores · online</span></div><em>LIVE</em></div>
+          <div class="metric"><i class="dot"></i><div><b>Storage pools</b><span>4 online pools · ZFS, PBS, local</span></div><em>LIVE</em></div>
+          <div class="metric"><i class="dot"></i><div><b>Defined VMs</b><span>6 named workloads · 5 running</span></div><em>LIVE</em></div>
+          <div class="metric"><i class="dot warn"></i><div><b>Observability</b><span>Uptime Kuma MCP path needs follow-up</span></div><em class="warn">REVIEW</em></div>
+        </aside>
+      </section>
+
+      <section id="map" aria-labelledby="map-title">
+        <div class="sec-head"><p class="kicker">01 · topology</p><div><h2 id="map-title">The internet sees a lobby. The lab stays behind the wall.</h2><p class="intro">This diagram describes trust boundaries and traffic direction, not addresses. It is intentionally public-safe: no DNS names, IP ranges, credentials, or management URLs appear here.</p></div></div>
+        <div class="map" role="img" aria-label="Topology from approved user through Cloudflare Access and an outbound tunnel to a segmented MCP service network, which can read Proxmox, Portainer, and Uptime Kuma.">
+          <div class="map-inner">
+            <article class="zone"><h3>Outside</h3><p>Approved human or agent</p><div class="node"><i></i><div><strong>Browser / Codex</strong><small>Starts an authenticated request.</small></div></div><div class="node"><i></i><div><strong>Cloudflare Access</strong><small>Identity gate at the edge.</small></div></div></article>
+            <div class="line"><span>authenticated HTTPS</span></div>
+            <article class="zone"><h3>Edge &amp; transport</h3><p>Outbound-only entry</p><div class="node"><i></i><div><strong>Cloudflare Tunnel</strong><small>No direct inbound service port on the home LAN.</small></div></div><div class="node"><i></i><div><strong>MCP portal</strong><small>One sign-in, server-level access control, tool logging.</small></div></div></article>
+            <div class="line"><span>service auth</span></div>
+            <article class="zone"><h3>Homelome</h3><p>Segmented service layer</p><div class="node"><i></i><div><strong>mcplome</strong><small>Isolated service VM with an outbound tunnel.</small></div></div><div class="node"><i></i><div><strong>Read-only MCP tools</strong><small>Proxmox · Portainer · Uptime Kuma</small></div></div><div class="node"><i></i><div><strong>OPNsensalome</strong><small>Firewall and only route out of the MCP segment.</small></div></div></article>
+          </div>
+        </div>
+        <p class="caption">Traffic flows inward only after identity and service checks. The tunnel originates from the lab; it is not a port forward. <a href="homelome-topology.svg">Download the standalone topology graphic (SVG)</a>.</p>
+      </section>
+
+      <section id="systems" aria-labelledby="systems-title">
+        <div class="sec-head"><p class="kicker">02 · systems</p><div><h2 id="systems-title">A tiny fleet with names that all end in <em>-lome</em>.</h2><p class="intro">The point is not to run everything. Each machine has a job, an owner, and a reason it is separated from the others.</p></div></div>
+        <div class="cards"><article class="card"><div class="num">1</div><h3>Proxmox node</h3><p>Single-node virtualization, running the core fleet on Dell server hardware. Current memory use is intentionally visible in the admin view, not this public page.</p></article><article class="card"><div class="num">6</div><h3>Defined VMs</h3><p>Firewall, backup, MCP, game, media, and automation workloads are separated by role instead of piled into one mystery box.</p></article><article class="card"><div class="num">4</div><h3>Storage pools</h3><p>A ZFS pool for capacity, a Proxmox Backup Server target, and local volumes for the hypervisor and VM disks.</p></article></div>
+        <div class="grid" style="margin-top:28px">
+          <div class="table" aria-label="Workload inventory"><div class="row head"><span>Workload</span><span>Role</span><span>Current state</span></div><div class="row"><b>OPNsensalome</b><span>Firewall and routing boundary</span><span>Running</span></div><div class="row"><b>BackupalomeServer</b><span>Backup service</span><span>Running</span></div><div class="row"><b>mcplome</b><span>Isolated MCP service host</span><span>Running</span></div><div class="row"><b>Gamelome</b><span>Game workloads</span><span>Running</span></div><div class="row"><b>Arralome</b><span>Docker automation and media services</span><span>Running</span></div><div class="row"><b>Medialome</b><span>Dedicated media workload</span><span>Stopped / planned work</span></div></div>
+          <aside class="callout"><h3>Why this shape?</h3><p>Game servers should not have to compete with media automation. A public connector should not have lateral access to the LAN. A backup target should not rely on the same failure domain as the data it protects. Separation is the design, not the aesthetic.</p></aside>
+        </div>
+      </section>
+
+      <section id="guardrails" aria-labelledby="guardrails-title">
+        <div class="sec-head"><p class="kicker">03 · guardrails</p><div><h2 id="guardrails-title">Useful access needs receipts.</h2><p class="intro">The MCP project exists to make the lab inspectable from an assistant without giving an assistant—or a leaked hostname—more power than it needs.</p></div></div>
+        <ol class="steps"><li><i class="step">1</i><div><b>Identity at the edge</b><span>Cloudflare Access verifies the person before the portal sees a request.</span></div></li><li><i class="step">2</i><div><b>Outbound-only transport</b><span>The tunnel connects outward from the lab. Home services do not publish raw management ports to the internet.</span></div></li><li><i class="step">3</i><div><b>Service-specific authentication</b><span>Each upstream service has its own boundary, so the portal is not a skeleton key.</span></div></li><li><i class="step">4</i><div><b>Read first, write later—if ever</b><span>The current MCP connection is used for inspection and diagnosis. Change authority stays deliberately narrow.</span></div></li><li><i class="step">5</i><div><b>Keep a trail</b><span>Tool activity, backups, and monitoring are designed to leave evidence for later troubleshooting.</span></div></li></ol>
+      </section>
+
+      <section id="notes" aria-labelledby="notes-title">
+        <div class="sec-head"><p class="kicker">04 · notes</p><div><h2 id="notes-title">What this lab has taught me so far.</h2><p class="intro">The best documentation is honest about what is verified, what is changing, and what still needs attention.</p></div></div>
+        <ul class="principles"><li><b>Monitoring beats vibes.</b><span>A service that looks fine on a dashboard may still be broken. The lab treats alerts and actual checks as evidence, not decoration.</span></li><li><b>Storage is a product decision.</b><span>Media capacity, backups, replication, and restore testing each have different jobs. “It has disk space” is not a backup plan.</span></li><li><b>Public docs have boundaries.</b><span>This page shares architecture and reasoning; it intentionally excludes addresses, tokens, serial numbers, and internal configuration.</span></li><li><b>Every outage gets a note.</b><span>The goal is less blame, more signal: what failed, what the system said, and what changed after the fix.</span></li></ul>
+        <div style="display:grid;gap:12px;margin-top:24px"><details><summary>Known follow-up: Uptime Kuma MCP connection</summary><p>The MCP portal currently lists Uptime Kuma as enabled, but a live tool request times out during upstream authentication and later returned a 502. This is being treated as a portal-to-service connectivity issue, not proof that the monitoring service itself is offline.</p></details><details><summary>Known follow-up: resource headroom</summary><p>One active Docker VM is currently using most of its assigned memory. It is a cue to inspect workload limits and trends before adding more services—not a reason to panic-rebuild a working environment.</p></details></div>
+      </section>
+    </main>
+    <footer class="foot"><span>Homelome · public-safe architecture note</span><span>Built with receipts, named with moon energy.</span><a href="index.html">← Back to aortizco</a></footer>
+  </div>
+</body>
+</html>

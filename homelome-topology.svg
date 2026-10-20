@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Homelome public-safe network topology</title>
+  <desc id="desc">An authenticated user passes Cloudflare Access and an outbound tunnel to a segmented MCP service layer, with read-only integrations to Proxmox, Portainer, and Uptime Kuma.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#090b11"/><stop offset="1" stop-color="#151426"/></linearGradient>
+    <linearGradient id="edge" x1="0" x2="1"><stop stop-color="#b9a3ff"/><stop offset="1" stop-color="#7ee8d2"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <style>
+      .k{font:600 16px Arial,sans-serif;letter-spacing:2px;fill:#aaa7bd}.t{font:700 26px Arial,sans-serif;fill:#f4f0ff}.s{font:400 17px Arial,sans-serif;fill:#c6c1d5}.small{font:400 14px Arial,sans-serif;fill:#aaa7bd}.zone{fill:#11121d;stroke:#2a2b40;stroke-width:2}.node{fill:#191a2a;stroke:#3a3951;stroke-width:2}.line{fill:none;stroke:url(#edge);stroke-width:5;stroke-linecap:round}.dot{fill:#7ee8d2}.warn{fill:#ffc76a}
+    </style>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <circle cx="1420" cy="112" r="145" fill="#b9a3ff" opacity=".05"/><circle cx="153" cy="795" r="190" fill="#7ee8d2" opacity=".035"/>
+  <text x="90" y="95" class="k">HOM ELOME / PUBLIC-SAFE FIELD GUIDE</text>
+  <text x="90" y="145" class="t" style="font-size:42px">Network topology</text>
+  <text x="90" y="180" class="s">Trust boundaries and traffic direction · no addresses, secrets, or management URLs</text>
+  <rect x="90" y="255" width="375" height="420" rx="22" class="zone"/>
+  <text x="125" y="305" class="k">OUTSIDE</text>
+  <rect x="125" y="345" width="305" height="95" rx="14" class="node"/><circle cx="157" cy="392" r="9" class="dot"/><text x="185" y="384" class="t">Browser / Codex</text><text x="185" y="410" class="small">Authenticated request begins</text>
+  <rect x="125" y="490" width="305" height="95" rx="14" class="node"/><circle cx="157" cy="537" r="9" class="dot"/><text x="185" y="529" class="t">Cloudflare Access</text><text x="185" y="555" class="small">Identity gate at the edge</text>
+  <path d="M465 465H580" class="line" filter="url(#glow)"/><text x="480" y="445" class="small">authenticated HTTPS</text>
+  <rect x="580" y="255" width="400" height="420" rx="22" class="zone"/>
+  <text x="615" y="305" class="k">EDGE &amp; TRANSPORT</text>
+  <rect x="615" y="345" width="330" height="95" rx="14" class="node"/><circle cx="647" cy="392" r="9" class="dot"/><text x="675" y="384" class="t">Cloudflare Tunnel</text><text x="675" y="410" class="small">Outbound from the lab</text>
+  <rect x="615" y="490" width="330" height="95" rx="14" class="node"/><circle cx="647" cy="537" r="9" class="dot"/><text x="675" y="529" class="t">MCP portal</text><text x="675" y="555" class="small">Access control + tool logging</text>
+  <path d="M980 465H1095" class="line" filter="url(#glow)"/><text x="1008" y="445" class="small">service auth</text>
+  <rect x="1095" y="255" width="415" height="420" rx="22" class="zone"/>
+  <text x="1130" y="305" class="k">HOM ELOME / SEGMENTED LAYER</text>
+  <rect x="1130" y="335" width="345" height="80" rx="14" class="node"/><circle cx="1162" cy="375" r="9" class="dot"/><text x="1190" y="367" class="t">mcplome</text><text x="1190" y="391" class="small">Isolated MCP service VM</text>
+  <rect x="1130" y="440" width="345" height="80" rx="14" class="node"/><circle cx="1162" cy="480" r="9" class="dot"/><text x="1190" y="472" class="t">Read-only tools</text><text x="1190" y="496" class="small">Proxmox · Portainer · Uptime Kuma</text>
+  <rect x="1130" y="545" width="345" height="80" rx="14" class="node"/><circle cx="1162" cy="585" r="9" class="warn"/><text x="1190" y="577" class="t">OPNsensalome</text><text x="1190" y="601" class="small">Firewall and route boundary</text>
+  <line x1="90" y1="742" x2="1510" y2="742" stroke="#2a2b40" stroke-width="2"/>
+  <circle cx="105" cy="797" r="7" class="dot"/><text x="125" y="803" class="s">Tunnel originates from the lab. No raw management ports are exposed to the internet.</text>
+  <text x="90" y="855" class="small">aortizco.webalome.link · architecture note · updated 2026-10-19</text>
+</svg>
