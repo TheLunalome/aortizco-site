@@ -24,9 +24,10 @@ portfolio baseline.
 ## Artifact and packaging
 
 `release-manifest.json` enumerates and pins the ten deployment files and their
-SHA-256 hashes. `npm run build` copies only those files to `dist/`, verifies
-source and output hashes, then scans the complete output. Cloudflare Pages is
-configured to run `npm run build` from repository root and publish `dist/`.
+SHA-256 hashes. `npm run build` normalizes allowlisted text to LF, copies only
+those files to `dist/`, verifies source and output hashes, then scans the
+complete output. Cloudflare Pages is configured to run `npm run build` from
+repository root and publish `dist/`.
 
 The owner approved the portfolio's existing contact address for publication.
 Privacy validation permits that exact address only in `index.html`, requires
@@ -34,13 +35,20 @@ the approved contact to occur exactly once there, and rejects other email
 addresses or its occurrence in any other deployment file.
 
 - Reconciled ZIP: `homelome-public-companion-reconciled-2026-10-20.zip`
-- ZIP SHA-256: `405252bd885f5b6daf8ef9b86b3a5a06b00c0d211192c917692cb2390faedc9c`
+- ZIP SHA-256: `57effbca17ca31a233506a865c9497452bccc011c62ddde5dab2338f7058205d`
 - Previous candidate SHA-256:
   `a84dfa0c3b174749847f85377a6f5f27e881716bd06dba8cd7a26492514c272a`
   (**superseded** by this main-based reconciliation)
 - Intermediate reconciliation archive SHA-256:
   `df0507f94c009f8739a318327764f71b2bfb18f0fda2eb33f003ca3032067b94`
   (**superseded** after the final portfolio navigation file was pinned)
+- Windows archive SHA-256:
+  `405252bd885f5b6daf8ef9b86b3a5a06b00c0d211192c917692cb2390faedc9c`
+  (**superseded** after canonical LF packaging was added)
+- The first Pages preview build (`bc8a6fce-8c68-41a0-b53c-18eeac5ad581`)
+  failed before deployment because Windows line endings differed from the
+  Linux build environment. The package now canonicalizes line endings before
+  hashing and output; no preview content was served by that failed build.
 
 ## Publication record
 

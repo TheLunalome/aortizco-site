@@ -20,8 +20,12 @@ function filesUnder(directory, relative = '') {
   });
 }
 
-function sha256(file) {
-  return crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+function sourceContents(file) {
+  return Buffer.from(fs.readFileSync(file, 'utf8').replace(/\r\n?/g, '\n'), 'utf8');
+}
+
+function sha256(contents) {
+  return crypto.createHash('sha256').update(contents).digest('hex');
 }
 
 if (!Array.isArray(manifest.files) || JSON.stringify([...manifest.files].sort()) !== JSON.stringify([...ALLOWED_FILES].sort())) {
@@ -37,17 +41,18 @@ if (existing.some(file => !ALLOWED_FILES.includes(file))) throw new Error('Unexp
 for (const file of ALLOWED_FILES) {
   const source = path.join(root, ...file.split('/'));
   if (!fs.existsSync(source) || !fs.statSync(source).isFile()) throw new Error('An allowlisted source file is missing.');
-  if (sha256(source) !== manifest.sha256[file]) throw new Error('Source content differs from the reviewed manifest.');
+  const contents = sourceContents(source);
+  if (sha256(contents) !== manifest.sha256[file])   throw new Error(`Source content differs from the reviewed manifest: ${file}`);
   const destination = path.join(output, ...file.split('/'));
   fs.mkdirSync(path.dirname(destination), { recursive: true });
-  fs.copyFileSync(source, destination);
+  fs.writeFileSync(destination, contents);
 }
 
 if (JSON.stringify(filesUnder(output).sort()) !== JSON.stringify([...ALLOWED_FILES].sort())) {
   throw new Error('Packaged file set differs from the deployment allowlist.');
 }
 for (const file of ALLOWED_FILES) {
-  if (sha256(path.join(output, ...file.split('/'))) !== manifest.sha256[file]) {
+  if (sha256(fs.readFileSync(path.join(output, ...file.split('/')))) !== manifest.sha256[file]) {
     throw new Error('Packaged content differs from the reviewed manifest.');
   }
 }

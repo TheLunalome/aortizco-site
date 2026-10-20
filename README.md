@@ -8,7 +8,8 @@ Explorer.
 
 - `npm run build` verifies source hashes against `release-manifest.json`, copies
   exactly the ten approved deployment files to `dist/`, and runs the privacy
-  scan. It does not publish.
+  scan. Text file line endings are normalized to LF so Windows and Cloudflare
+  produce identical bytes. It does not publish.
 - `npm run check` checks the existing `dist/` file set and scans the complete
   artifact without modifying it.
 - `npm test` runs negative privacy fixtures against the complete artifact.
