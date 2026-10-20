@@ -1,98 +1,66 @@
-# Homelome network field guide
+# Homelome public architecture guide
 
-**Audience:** portfolio reviewers, future Alex, and anyone inheriting the lab.  
-**Scope:** public-safe topology and operating notes. No addresses, hostnames, credentials, API keys, serial numbers, raw logs, or private service URLs belong in this document.  
-**Evidence refresh:** 2026-10-19, using read-only control-plane queries and a local documentation review.
+**Audience:** portfolio readers and people interested in clear home-technology design.
+**Scope:** generic roles, boundaries, and relationship types. This is not a private inventory, implementation guide, or live status report.
 
 ## One-minute overview
 
-Homelome is a single-node Proxmox homelab that separates firewall, backup, remote-inspection, game, and application workloads into named virtual machines. Public access follows an identity-aware, outbound-only pattern: an approved request reaches the edge first, a tunnel carries it inward, and a portal exposes narrowly scoped inspection tools to selected services.
+A home-technology environment can separate network policy, compute, applications, storage, backups, and inspection tools into roles with clear boundaries. Public explanations are most useful when they describe those roles without publishing machine names, addresses, counts, configuration, or current state.
 
-The purpose is practical: make a home system useful without making its management plane public, and make its current state explainable without pretending that every signal is a guarantee.
+This guide is conceptual. It does not document the exact systems, routes, identities, or health of any private environment.
 
-## Start with the atlas
+## Start with the public guide
 
-| Lens | What it explains |
+| Page | What it explains |
 |---|---|
-| Architecture | The route from an approved request to a scoped internal service. |
-| Fleet | The role of each named workload and why those roles stay separate. |
-| Storage | The distinction between online capacity, backup coverage, and restore evidence. |
-| Access | Identity, outbound transport, separate service authentication, and read-first tooling. |
-| Evidence | What the latest control-plane check actually confirmed. |
-| Field notes | The operating principles formed by real failure and recovery work. |
+| [Homelome guide](homelome.html) | Generic roles, boundaries, and recovery principles. |
+| [Public Architecture Explorer](explore.html) | A sanitized, interactive map of generic roles and typed relationships. |
+| [Portfolio](index.html) | The public project portfolio. |
 
-## Topology
+## Illustrative topology
 
-Approved user or agent  
-↓ authenticated request  
-Identity-aware edge and MCP portal  
-↓ outbound tunnel from the lab  
-mcplome — scoped integration host  
-↓ service-specific authentication  
-Proxmox · Portainer · Uptime Kuma
+```text
+Approved client
+↓ identity-aware boundary
+Controlled connection
+↓ scoped inspection layer
+Generic service roles
+```
 
-OPNsensalome is the firewall and routing boundary for the isolated integration segment.
+This sequence illustrates possible trust boundaries, not actual routes or deployment settings. It contains no private hostnames, service URLs, or infrastructure identifiers.
 
-The public diagram describes trust boundaries and traffic direction, not a route map. The tunnel originates inside Homelome; it is not a port forward.
+## Generic roles
 
-## Current evidence snapshot
-
-The latest read-only discovery confirmed:
-
-| Area | Finding | Confidence |
+| Role | Responsibility | Boundary to consider |
 |---|---|---|
-| Hypervisor | One Proxmox node is online with 20 logical CPU cores reported. | validated |
-| Workloads | BackupalomeServer, OPNsensalome, mcplome, Gamelome, and Arralome were running. Medialome was stopped. | validated |
-| Storage | Backupalome, RAIDZalome, local, and local-lvm reported online. | validated |
-| MCP portal | Proxmox, Portainer, and Uptime Kuma were enabled in the portal. | observed |
-| Proxmox path | The inventory, VM, and storage requests completed. | validated |
-| Portainer path | A fresh sign-in is required before its endpoint inventory can be read. | needs review |
-| Uptime Kuma path | The monitor-summary request returned an upstream HTTP 502. | needs review |
+| Compute host | Provides resources for virtual machines or containers. | Host availability is different from application health. |
+| Application service | Performs a user-facing or background task. | Dependencies and permissions should be explicit. |
+| Network boundary | Filters or routes traffic between zones. | A role description does not disclose policy or routes. |
+| Data storage | Holds application data or shared files. | Declared paths do not prove actual access. |
+| Backup copy | Supports recovery from a separate copy. | Coverage and restore evidence are separate questions. |
+| Inspection tool | Helps observe or administer other roles. | Keep access narrowly scoped and distinguish read from write. |
 
-This is a dated infrastructure snapshot, not an uptime claim. It does not prove application health, alert delivery, successful backups, or restore readiness.
+## Relationship types are not interchangeable
 
-## Workload roles
+Hosting, application/API communication, VPN routing, filesystem access, import behavior, identity, and backup coverage describe different relationships. A diagram should label each relationship rather than implying that every component shares one network path. A declared or proposed relationship is not proof that it is active, healthy, or recoverable.
 
-| Workload | Job | Boundary |
-|---|---|---|
-| OPNsensalome | Firewall and routing | Controls the isolated integration segment's path to internal services and the internet. |
-| BackupalomeServer | Backup role | Keeps backup storage distinct from primary workloads. |
-| mcplome | Scoped integration host | Runs the tunnel and service-specific inspection containers. |
-| Gamelome | Game workloads | Keeps game resource use away from the application stack. |
-| Arralome | Docker automation and media services | Hosts the active application ecosystem. |
-| Medialome | Retained media workload | Preserved in a stopped state while its role is refined. |
+## Data and recovery principles
 
-## Security model
+- Storage capacity is not the same as a backup copy.
+- Backup configuration is not proof that all needed data is covered.
+- A readable catalog is not chunk verification.
+- A verified backup is not a tested restore.
+- Recovery claims should identify their evidence and limits.
 
-1. **Identity gate:** Access is verified before a request reaches the home environment.
-2. **No direct inbound management exposure:** the tunnel starts from inside the lab.
-3. **Two boundaries per service:** portal access is separate from each service's own authentication and permissions.
-4. **Least privilege:** the current MCP workflow is read-first. Inspect, diagnose, present evidence, then make any change authority explicit.
-5. **Network separation:** integrations are segmented and routed through the firewall rather than given broad LAN access.
-6. **Public/private split:** this guide explains the design while private operations documentation holds implementation details.
-
-## Data and recovery model
-
-The current control plane reports ZFS capacity, a Proxmox Backup Server target, and local storage online. That gives the lab a useful foundation, but it does not make the phrase "fully backed up" true by itself.
-
-The working standard is simple:
-
-- An online pool is not a verified backup.
-- A completed backup is not a proven recovery until a restore is tested.
-- Large data stores may need protection that differs from VM operating-system disks.
-- Capacity and recovery deserve separate, dated evidence.
-
-## Maintenance rhythm
+## Maintenance principles
 
 | When | Practice |
 |---|---|
-| Before a change | Capture evidence, back up or snapshot where appropriate, and state the rollback point. |
-| After a change | Check a real service path, not just whether a dashboard looks green. |
-| Monthly | Review updates, remote-access boundaries, storage headroom, and documentation drift. |
-| After an incident | Record the symptom, the root cause, alert behavior, repair, and permanent guardrail. |
+| Before a change | Record the intended effect and a rollback option. |
+| After a change | Validate the specific behavior that changed. |
+| Periodically | Review access boundaries, data coverage, and documentation drift. |
+| After an incident | Separate symptoms, causes, repairs, and follow-up actions. |
 
-## Public documentation rules
+## Public documentation boundary
 
-Keep the public version focused on role, design, risk decisions, and verified outcomes. Keep operational configuration private. Never publish network addresses, private hostnames, access-policy details, tokens, raw logs, hardware identifiers, or service credentials.
-
-The accompanying visual guide is available at [Homelome field guide](homelome.html).
+This companion intentionally omits private inventory, internal links, personal infrastructure details, operational status, addresses, hostnames, access-policy settings, credentials, raw logs, and hardware identifiers. It is not evidence of current service health.

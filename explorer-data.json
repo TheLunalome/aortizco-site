@@ -1,0 +1,134 @@
+{
+  "mode": "public",
+  "entities": [
+    {
+      "id": "role-01",
+      "name": "Virtualization host",
+      "role": "Virtualization host",
+      "kind": "host",
+      "parent": null,
+      "overview": "Provides compute capacity for virtual machines."
+    },
+    {
+      "id": "role-02",
+      "name": "Application host",
+      "role": "Application host",
+      "kind": "vm",
+      "parent": "role-01",
+      "overview": "A virtual machine role for application services."
+    },
+    {
+      "id": "role-03",
+      "name": "Data storage",
+      "role": "Data storage",
+      "kind": "storage",
+      "parent": "role-02",
+      "overview": "Provides storage for application data."
+    },
+    {
+      "id": "role-04",
+      "name": "Game services host",
+      "role": "Game services host",
+      "kind": "vm",
+      "parent": "role-01",
+      "overview": "A virtual machine role for game services."
+    },
+    {
+      "id": "role-05",
+      "name": "Integration host",
+      "role": "Integration host",
+      "kind": "vm",
+      "parent": "role-01",
+      "overview": "A virtual machine role for scoped integrations."
+    },
+    {
+      "id": "role-06",
+      "name": "Backup host",
+      "role": "Backup host",
+      "kind": "vm",
+      "parent": "role-01",
+      "overview": "A virtual machine role for backup services."
+    },
+    {
+      "id": "role-07",
+      "name": "Secondary storage",
+      "role": "Secondary storage",
+      "kind": "nas",
+      "parent": null,
+      "overview": "A separate storage role for backup copies."
+    },
+    {
+      "id": "role-08",
+      "name": "Network boundary",
+      "role": "Network boundary",
+      "kind": "vm",
+      "parent": "role-01",
+      "overview": "A role for routing and traffic policy."
+    }
+  ],
+  "relationships": [
+    {
+      "id": "link-1",
+      "from": "role-01",
+      "to": "role-02",
+      "lens": "logical",
+      "label": "hosts VM",
+      "stateClass": "observed",
+      "verification": "observed"
+    },
+    {
+      "id": "link-2",
+      "from": "role-01",
+      "to": "role-04",
+      "lens": "logical",
+      "label": "hosts VM",
+      "stateClass": "observed",
+      "verification": "observed"
+    },
+    {
+      "id": "link-3",
+      "from": "role-01",
+      "to": "role-05",
+      "lens": "logical",
+      "label": "hosts VM",
+      "stateClass": "observed",
+      "verification": "observed"
+    },
+    {
+      "id": "link-4",
+      "from": "role-01",
+      "to": "role-06",
+      "lens": "logical",
+      "label": "hosts VM",
+      "stateClass": "observed",
+      "verification": "observed"
+    },
+    {
+      "id": "link-5",
+      "from": "role-01",
+      "to": "role-08",
+      "lens": "logical",
+      "label": "hosts VM",
+      "stateClass": "observed",
+      "verification": "observed"
+    },
+    {
+      "id": "link-6",
+      "from": "role-02",
+      "to": "role-03",
+      "lens": "storage",
+      "label": "mounts data disk",
+      "stateClass": "observed",
+      "verification": "observed"
+    },
+    {
+      "id": "link-7",
+      "from": "role-06",
+      "to": "role-07",
+      "lens": "backup",
+      "label": "off-site backup copy",
+      "stateClass": "observed",
+      "verification": "documented"
+    }
+  ]
+}

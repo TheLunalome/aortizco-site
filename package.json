@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node package-release.mjs",
+    "check": "node privacy-check.mjs",
+    "test": "node privacy-check.mjs --self-test"
+  }
+}

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="color-scheme" content="dark">
+  <title>Architecture Explorer · Homelome</title>
+  <link rel="stylesheet" href="explorer.css">
+  <script src="explorer.js" defer></script>
+</head>
+<body data-mode="public">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="explorer-header">
+    <a class="brand" href="homelome.html">☾ lunalome</a>
+      <nav aria-label="Site navigation"><a href="index.html">Portfolio</a><a href="homelome.html">Homelome guide</a><a href="explore.html" aria-current="page">Public explorer</a></nav>
+  </header>
+  <main id="main">
+    <section class="intro-panel">
+      <p class="eyebrow">Homelome / architecture / public preview</p>
+      <h1>See how the lab fits together.</h1>
+      <p class="intro">Explore generic roles and connections. Relationship labels show their type and evidence; no live system status is published.</p>
+      <p id="snapshot" class="snapshot">Loading inventory…</p>
+    </section>
+    <section class="beginner-guide" aria-labelledby="beginner-title">
+  <p class="eyebrow">A quick guide</p><h2 id="beginner-title">What the roles and lines mean</h2>
+  <div class="guide-cards">
+    <article><h3>Host and virtual machine</h3><p>A host is a physical computer that runs virtual machines. A virtual machine is a separate software-defined computer that can group a set of jobs.</p></article>
+    <article><h3>Storage and backup</h3><p>Storage is where files live; a backup is a separate copy intended for recovery. A storage line does not prove backup coverage.</p></article>
+    <article><h3>Firewall and application</h3><p>A firewall filters or routes traffic between networks. An application role describes what a service does—not every route its traffic takes.</p></article>
+    <article><h3>Read the evidence</h3><p>Each line is labeled with its relationship and evidence state. Dotted or unknown lines are deliberately uncertain; labels do not report live system status.</p></article>
+  </div>
+</section>
+
+    <section class="explorer-panel" aria-label="Architecture Explorer">
+      <div class="toolbar">
+        <div class="lenses" role="group" aria-label="Relationship lens">
+          <button type="button" data-lens="logical" aria-pressed="true">Logical</button>
+          <button type="button" data-lens="physical" aria-pressed="false">Physical</button>
+          <button type="button" data-lens="storage" aria-pressed="false">Storage</button>
+          <button type="button" data-lens="backup" aria-pressed="false">Backup</button>
+        </div>
+        <label class="search-label">Find a node <input id="node-search" type="search" placeholder="Search roles or names" autocomplete="off"></label>
+      </div>
+      <div class="workbench">
+        <div class="canvas-column">
+          <div class="canvas-controls" role="group" aria-label="Diagram controls">
+            <button type="button" id="zoom-in" aria-label="Zoom in">+</button>
+            <button type="button" id="zoom-out" aria-label="Zoom out">−</button>
+            <button type="button" id="fit" aria-label="Fit diagram to view">Fit</button>
+          </div>
+          <div id="graph-viewport" class="graph-viewport" aria-label="Interactive architecture diagram. Drag to pan; use buttons to zoom.">
+            <div id="graph-stage" class="graph-stage">
+              <svg id="edges" class="edges" viewBox="0 0 1140 920" aria-hidden="true"></svg>
+              <div id="nodes" class="nodes"></div>
+            </div>
+          </div>
+          <p id="lens-note" class="lens-note" role="status"></p>
+          <div class="legend" aria-label="Evidence legend"><span><i class="line observed"></i>Observed</span><span><i class="line intended"></i>Intended</span><span><i class="line proposed"></i>Proposed</span><span><i class="line unknown"></i>Unknown</span><span class="legend-note">Evidence labels describe relationships, not live health.</span></div>
+          <div class="legend relationship-legend" aria-label="Relationship type legend">
+            <span><i class="line hosting"></i>Hosting</span><span><i class="line application"></i>Application / API</span><span><i class="line vpn"></i>VPN routing</span><span><i class="line filesystem"></i>Filesystem access</span><span><i class="line import"></i>Import behavior</span><span><i class="line backup"></i>Backup copy</span><span><i class="line identity"></i>Identity / authentication</span>
+            <span class="legend-note">Identity lines appear only when a source verifies them. No identity flow is asserted for the media journey.</span>
+          </div>
+          <div class="list-fallback" id="list-fallback"><h2>Accessible node list</h2><p>Use this list on a phone or with a keyboard. Select a row to read its evidence and links.</p><div id="node-list"></div></div>
+        </div>
+        <aside id="detail" class="detail" aria-live="polite"><p class="eyebrow">Node details</p><h2>Select a system</h2><p>Choose a node in the diagram or list to inspect its role, relationships, and documentation.</p></aside>
+      </div>
+    </section>
+  </main>
+  <footer><a href="homelome.html">Return home</a><span>Connections marked unknown are deliberately not inferred.</span></footer>
+</body>
+</html>
