@@ -58,15 +58,34 @@ h1, h2, h3 { text-wrap: balance; }
 .page {
   max-width: 1080px;
   margin: 0 auto;
-  padding-block: 20px 56px;
+  padding-block: 0 56px;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
 
 /* Top bar */
-.top { display: flex; justify-content: space-between; align-items: center; gap: 12px 24px; flex-wrap: wrap; }
+.top {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px 24px;
+  flex-wrap: wrap;
+  padding: 14px 0 12px;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(4px);
+  border-bottom: 1px solid var(--line);
+}
 .brand { display: flex; align-items: center; gap: 10px; font: 500 0.85rem var(--f-mono); letter-spacing: 0.04em; }
-.top nav { display: flex; align-items: center; gap: 4px 18px; flex-wrap: wrap; font: 500 0.8rem var(--f-mono); }
+.top nav {
+  display: flex;
+  align-items: center;
+  gap: 8px 14px;
+  flex-wrap: wrap;
+  font: 500 0.8rem var(--f-mono);
+}
 .top nav a { color: var(--muted); text-decoration: none; padding: 4px 0; }
 .top nav a:hover { color: var(--fg); }
 .tbtn { font: 500 0.75rem var(--f-mono); color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; cursor: pointer; }
@@ -103,34 +122,15 @@ h1 { font: 700 clamp(2.7rem, 9vw, 5.4rem)/0.95 var(--f-display); letter-spacing:
 /* Sections */
 section { padding-block: 40px; border-top: 1px solid var(--line); }
 .hero { border-top: 0; }
+section[id] { scroll-margin-top: 90px; }
 h2.sec { font: 600 clamp(1.5rem, 3.4vw, 2rem)/1.15 var(--f-display); letter-spacing: -0.02em; margin-bottom: 8px; }
 .intro { color: var(--muted); max-width: 62ch; margin-bottom: 24px; }
 
-/* Project tracker */
-.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-.fbtn { font: 500 0.78rem var(--f-mono); color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
-.fbtn:hover { color: var(--fg); border-color: var(--muted); }
-.fbtn[aria-pressed="true"] { color: var(--bg); background: var(--fg); border-color: var(--fg); }
-.fbtn .ct { font-variant-numeric: tabular-nums; opacity: 0.75; }
-
-.proj { border-top: 1px solid var(--line); }
-.proj:last-child { border-bottom: 1px solid var(--line); }
-.proj summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 14px minmax(0, 1fr) auto; gap: 8px 16px; align-items: start; padding: 18px 4px; }
-.proj summary::-webkit-details-marker { display: none; }
-.proj summary:hover .pname { text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 4px; }
-.proj .moon { margin-top: 7px; }
-.pname { font: 600 1.2rem/1.3 var(--f-display); letter-spacing: -0.01em; }
-.psum { color: var(--muted); max-width: 64ch; margin-top: 2px; }
-.pmeta { display: flex; align-items: center; gap: 14px; font: 500 0.7rem var(--f-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); padding-top: 8px; white-space: nowrap; }
-.pmeta .st { color: var(--c); }
-.pmeta::after { content: ""; width: 7px; height: 7px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg); transition: transform 0.15s; margin-bottom: 3px; }
-.proj[open] .pmeta::after { transform: rotate(-135deg); margin-bottom: -2px; }
-.pbody { padding: 0 4px 26px 34px; }
-.pbody ul { padding-left: 18px; display: grid; gap: 8px; max-width: 70ch; margin-bottom: 16px; }
-.pbody li::marker { color: var(--muted); }
-.since { font: 400 0.75rem var(--f-mono); color: var(--muted); margin-bottom: 10px; }
-.stack { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; padding: 0 !important; margin: 0 !important; }
-.stack li { font: 400 0.72rem var(--f-mono); color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 2px 8px; }
+/* Projects */
+.project-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.project-card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+.project-card h3 { font: 600 1.25rem/1.2 var(--f-display); letter-spacing: -0.01em; margin-bottom: 8px; }
+.project-card p { color: var(--muted); }
 
 /* Case study */
 .case { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 40px; }
@@ -182,15 +182,21 @@ h2.sec { font: 600 clamp(1.5rem, 3.4vw, 2rem)/1.15 var(--f-display); letter-spac
 .foot { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px 24px; border-top: 1px solid var(--line); padding-top: 18px; font: 400 0.75rem var(--f-mono); color: var(--muted); }
 
 @media (max-width: 760px) {
+  .top nav {
+    width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2px;
+  }
+  .top nav a, .top nav .tbtn { flex: none; white-space: nowrap; }
   .hero { grid-template-columns: minmax(0, 1fr); gap: 28px; padding-block: 36px 28px; }
+  .project-cards { grid-template-columns: minmax(0, 1fr); }
   .case, .cols { grid-template-columns: minmax(0, 1fr); gap: 28px; }
   .job { grid-template-columns: minmax(0, 1fr); }
-  .proj summary { grid-template-columns: 14px minmax(0, 1fr); }
-  .pmeta { grid-column: 2; padding-top: 0; }
-  .pbody { padding-left: 4px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .pmeta::after { transition: none; }
+  .top { backdrop-filter: none; }
 }
 </style>
 
@@ -198,18 +204,19 @@ h2.sec { font: 600 clamp(1.5rem, 3.4vw, 2rem)/1.15 var(--f-display); letter-spac
   <header class="top">
     <div class="brand"><span class="moon brandmoon" aria-hidden="true"></span>lunalome</div>
     <nav aria-label="Sections">
+      <a href="#home">Home</a>
       <a href="#projects">Projects</a>
-      <a href="homelome.html">Homelome</a>
-      <a href="explore.html">Public explorer</a>
       <a href="#case-study">Case study</a>
+      <a href="#how">How I work</a>
       <a href="#experience">Experience</a>
       <a href="#credentials">Credentials</a>
+      <a href="#off">Off the clock</a>
       <button class="tbtn" id="theme" type="button" aria-label="Switch between light and dark theme">Theme</button>
     </nav>
   </header>
 
   <main>
-    <section class="hero" aria-labelledby="name">
+    <section id="home" class="hero" aria-labelledby="name">
       <div>
         <p class="role">Cyber Operations Analyst at Hillwood</p>
         <h1 id="name">Alexander Ortiz</h1>
@@ -228,10 +235,22 @@ h2.sec { font: 600 clamp(1.5rem, 3.4vw, 2rem)/1.15 var(--f-display); letter-spac
     </section>
 
     <section id="projects" aria-labelledby="projects-h">
-      <h2 class="sec" id="projects-h">Project tracker</h2>
-      <p class="intro">Work, lab and study projects with their real status. Open any row for what I built, what it runs on and the decisions behind it.</p>
-      <div class="filters" id="filters" role="group" aria-label="Filter projects by status"></div>
-      <div id="list"></div>
+      <h2 class="sec" id="projects-h">Projects</h2>
+      <p class="intro">Current projects I am actively building and maintaining.</p>
+      <div class="project-cards">
+        <article class="project-card">
+          <h3>Homelome</h3>
+          <p>A home lab on Proxmox with a firewall, monitoring, and backups with a tested restore.</p>
+        </article>
+        <article class="project-card">
+          <h3>Brainalome</h3>
+          <p>A version-controlled knowledge base (Git and Obsidian) that serves as shared long-term memory for multiple AI agents.</p>
+        </article>
+        <article class="project-card">
+          <h3>Jarvislome</h3>
+          <p>An always-on assistant reachable from my phone that answers from the knowledge base and takes notes, with every file action going through a small gated tool.</p>
+        </article>
+      </div>
     </section>
 
     <section id="case-study" aria-labelledby="case-h">
@@ -263,7 +282,7 @@ h2.sec { font: 600 clamp(1.5rem, 3.4vw, 2rem)/1.15 var(--f-display); letter-spac
       </div>
     </section>
 
-    <section aria-labelledby="how-h">
+    <section id="how" aria-labelledby="how-h">
       <h2 class="sec" id="how-h">How I work</h2>
       <p class="intro">Habits I use in the lab and want to bring to the job.</p>
       <ul class="principles">
@@ -316,7 +335,7 @@ h2.sec { font: 600 clamp(1.5rem, 3.4vw, 2rem)/1.15 var(--f-display); letter-spac
       </div>
     </section>
 
-    <section aria-labelledby="off-h">
+    <section id="off" aria-labelledby="off-h">
       <h2 class="sec" id="off-h">Off the clock</h2>
       <ul class="chips" style="margin-top:16px">
         <li>Electronic music and festivals</li>
@@ -348,87 +367,9 @@ var CONFIG = {
 };
 
 var PROJECTS = [
-  {
-    name: "Homelome MCP portal", status: "live", area: "Lab", since: "Oct 2026",
-    summary: "Lets an approved assistant inspect selected Homelome systems remotely through a scoped, read-first design.",
-    points: [
-      "Selected service integrations are reached through identity-aware access and an outbound tunnel; direct home-LAN management ports are not exposed.",
-      "The portal and each upstream service retain separate access boundaries.",
-      "The current workflow is inspection and diagnosis. Any change authority stays explicit and scoped.",
-      "The integration host uses a dedicated segment behind the firewall boundary.",
-      "Public field notes document evidence and uncertainty without exposing the implementation."
-    ],
-    stack: ["Cloudflare Zero Trust", "Cloudflare Tunnel", "MCP", "Docker", "Proxmox", "Portainer"]
-  },
-  {
-    name: "Monitoring and phone alerts", status: "building", area: "Lab", since: "Oct 2026",
-    summary: "Recovering monitoring visibility and validating alert delivery after an earlier silent failure.",
-    points: [
-      "The intended scope covers service health, host and storage signals, network reachability, and recovery jobs.",
-      "The current Uptime Kuma MCP path needs follow-up, so monitor state and delivery are not being represented as live here.",
-      "Next: validate a real monitor, notification path, and documented escalation loop."
-    ],
-    stack: ["Uptime Kuma", "ntfy", "Proxmox notifications"]
-  },
-  {
-    name: "Backups with Proxmox Backup Server", status: "building", area: "Lab",
-    summary: "Reconciling backup evidence and preparing a real restore drill for the workloads that matter.",
-    points: [
-      "The backup target is online, but the current inventory still needs reconciliation with retention and job evidence.",
-      "Large data disks may need a separate protection plan from VM operating-system disks.",
-      "An online pool is not a verified backup, and a completed backup is not a proven recovery until a restore is tested.",
-      "Next: record a restore drill with clear evidence and recovery timing."
-    ],
-    stack: ["Proxmox Backup Server", "ZFS", "Synology NAS"]
-  },
-  {
-    name: "Private cloud behind Cloudflare Access", status: "live", area: "Lab",
-    summary: "My own file sync service, reachable from anywhere and restricted to one identity.",
-    points: [
-      "Synology Drive published through a Cloudflare Tunnel, with an Access policy that allows only my email.",
-      "WireGuard is the fallback path for remote access.",
-      "The same tunnel and Access pattern later became the foundation for the MCP portal."
-    ],
-    stack: ["Synology Drive", "Cloudflare Tunnel", "Cloudflare Access", "WireGuard"]
-  },
-  {
-    name: "Arralome media stack rebuild", status: "building", area: "Lab", since: "Oct 2026",
-    summary: "Rebuilding my media and download automation as one Git-managed stack on a 6 TB ZFS-backed disk.",
-    points: [
-      "One shared data mount so downloads move into the library as instant hardlinks instead of network copies.",
-      "Image versions pinned, secrets kept only in an environment file on the host, and the whole stack in Git.",
-      "Quality profiles from the TRaSH Guides applied with Recyclarr, instead of grabbing whatever a search returns.",
-      "The existing 3.3 TB library is adopted in place, and the download client runs behind a VPN container with a kill switch."
-    ],
-    stack: ["Docker Compose", "ZFS", "Git", "Sonarr and Radarr", "Recyclarr", "Gluetun"]
-  },
-  {
-    name: "WGU B.S. Information Technology", status: "building", area: "Learning", since: "Jul 2026",
-    summary: "An accelerated degree plan built on top of my certifications.",
-    points: [
-      "9 courses transferred in through certifications I already held.",
-      "Courses ordered by prerequisite chain so the slowest ones start first."
-    ],
-    stack: ["WGU", "Accelerated plan"]
-  },
-  {
-    name: "Gamelome game server VM", status: "live", area: "Lab", since: "Oct 2026",
-    summary: "A dedicated game workload that keeps game-server resource use away from the active application stack.",
-    points: [
-      "Gamelome is running as its own workload with separate assigned resources.", "Its next improvements are about backup coverage and repeatable recovery, not collapsing it back into the app stack."
-    ],
-    stack: ["Proxmox", "Docker"]
-  },
-  {
-    name: "Read-only OPNsense MCP server", status: "planned", area: "Lab",
-    summary: "A small custom MCP server so Claude can inspect my firewall without being able to change it.",
-    points: [
-      "About six read-only tools: interfaces, rules, aliases, gateway status, DHCP leases and the firewall log.",
-      "Written myself because the community option has no authentication of its own in HTTP mode.",
-      "Backed by an OPNsense API user limited to the pages those tools read."
-    ],
-    stack: ["TypeScript", "MCP SDK", "OPNsense API"]
-  }
+  { status: "live" },
+  { status: "live" },
+  { status: "building" }
 ];
 
 var STATUS = {
@@ -471,41 +412,6 @@ function renderBoard() {
   document.getElementById("foot-updated").textContent = u;
 }
 
-function renderList() {
-  var html = "";
-  PROJECTS.forEach(function (p) {
-    html += '<details class="proj s-' + p.status + '" data-status="' + p.status + '">' +
-      '<summary><i class="moon s-' + p.status + '" aria-hidden="true"></i>' +
-      '<div><div class="pname">' + p.name + '</div><div class="psum">' + p.summary + '</div></div>' +
-      '<div class="pmeta"><span>' + p.area + '</span><span class="st">' + STATUS[p.status].label + '</span></div></summary>' +
-      '<div class="pbody">' +
-      (p.since ? '<p class="since">Started ' + p.since + '</p>' : '') +
-      '<ul>' + p.points.map(function (x) { return "<li>" + x + "</li>"; }).join("") + '</ul>' +
-      '<ul class="stack">' + p.stack.map(function (x) { return "<li>" + x + "</li>"; }).join("") + '</ul>' +
-      '</div></details>';
-  });
-  document.getElementById("list").innerHTML = html;
-}
-
-function renderFilters() {
-  var wrap = document.getElementById("filters");
-  var opts = [{ k: "all", label: "All", n: PROJECTS.length }];
-  Object.keys(STATUS).forEach(function (k) { opts.push({ k: k, label: STATUS[k].label, n: count(k) }); });
-  wrap.innerHTML = opts.map(function (o, i) {
-    return '<button type="button" class="fbtn" data-f="' + o.k + '" aria-pressed="' + (i === 0) + '">' +
-      o.label + ' <span class="ct">' + o.n + '</span></button>';
-  }).join("");
-  wrap.addEventListener("click", function (e) {
-    var b = e.target.closest("button");
-    if (!b) return;
-    var f = b.getAttribute("data-f");
-    wrap.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
-    document.querySelectorAll(".proj").forEach(function (el) {
-      el.hidden = !(f === "all" || el.getAttribute("data-status") === f);
-    });
-  });
-}
-
 function renderCerts() {
   document.getElementById("certs").innerHTML = CERTS.map(function (c) {
     return '<li class="cert"><i class="moon s-' + (c.s === "earned" ? "live" : "planned") + '" aria-hidden="true"></i>' +
@@ -540,11 +446,8 @@ function setupTheme() {
 }
 
 renderBoard();
-renderList();
-renderFilters();
 renderCerts();
 renderContact();
 setupTheme();
 </script>
-
 
