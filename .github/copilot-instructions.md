@@ -1,0 +1,4 @@
+- Never remove existing content unless the issue says so.
+- After changing any file in the deployment allowlist, update its sha256 in `release-manifest.json`.
+- Run `npm run build` and make sure it passes, including the privacy check, before finishing.
+- Do not add IP addresses, host names, e-mails or account details.
