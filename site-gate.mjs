@@ -212,13 +212,25 @@ export function checkChange(root, base, head) {
 }
 
 // Make `origin/main` available (a Cloudflare build clone may be shallow and may not have it). Returns the merge base commit or null.
+const PUBLIC_REPO = 'https://github.com/TheLunalome/aortizco-site.git';
+const redact = (t) => String(t).replace(/[a-z][a-z0-9+.-]*:\/\/\S+/gi, '<url>').replace(/\s+/g, ' ').trim().slice(0, 240);
+
+// Make main available as refs/remotes/origin/main (a Cloudflare build clone may be shallow and may not have it). Tries the clone's own remote,
+// then the public repository address (it is public, so no credential is needed). Returns { sha, mainTip } or { error } with a redacted reason.
 export function mainBase(root) {
-  if (git(root, ['rev-parse', '--is-shallow-repository']).out.trim() === 'true') git(root, ['fetch', '--no-tags', '--unshallow', 'origin']);
-  const f = git(root, ['fetch', '--no-tags', 'origin', '+refs/heads/main:refs/remotes/origin/main']);
-  if (!f.ok) return { error: 'could not fetch main to compare with' };
-  const mb = git(root, ['merge-base', 'refs/remotes/origin/main', 'HEAD']);
-  if (!mb.ok || !/^[0-9a-f]{40}$/.test(mb.out.trim())) return { error: 'could not find where this change starts from main' };
-  return { sha: mb.out.trim(), mainTip: git(root, ['rev-parse', 'refs/remotes/origin/main']).out.trim() };
+  const shallow = git(root, ['rev-parse', '--is-shallow-repository']).out.trim() === 'true';
+  const spec = '+refs/heads/main:refs/remotes/origin/main';
+  const tried = [];
+  for (const remote of ['origin', PUBLIC_REPO]) {
+    if (shallow) git(root, ['fetch', '--no-tags', '--unshallow', remote]);
+    const f = git(root, ['fetch', '--no-tags', remote, spec]);
+    if (f.ok) {
+      const mb = git(root, ['merge-base', 'refs/remotes/origin/main', 'HEAD']);
+      if (mb.ok && /^[0-9a-f]{40}$/.test(mb.out.trim())) return { sha: mb.out.trim(), mainTip: git(root, ['rev-parse', 'refs/remotes/origin/main']).out.trim() };
+      tried.push(`merge-base failed after fetching from ${remote === 'origin' ? 'origin' : 'the public address'} (shallow=${shallow}): ${redact(mb.err)}`);
+    } else tried.push(`fetch from ${remote === 'origin' ? 'origin' : 'the public address'} failed (shallow=${shallow}): ${redact(f.err)}`);
+  }
+  return { error: `could not fetch main to compare with; ${tried.join('; ')}` };
 }
 
 export function runGate(root, env = process.env) {

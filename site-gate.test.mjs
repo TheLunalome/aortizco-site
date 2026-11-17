@@ -1,5 +1,5 @@
 // Tests for site-gate.mjs. Run: node site-gate.test.mjs  (npm test runs it). Rules first, then real git repositories in a temporary folder
-// (a bare "origin" and a clone), so the path, manifest, scan and cap rules are exercised the way the build runs them. No network.
+// (a bare "origin" and a clone), so the path, manifest, scan and cap rules are exercised the way the build runs them. One check (no origin) may try the public address.
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
