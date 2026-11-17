@@ -25,6 +25,9 @@ export const EDITABLE = Object.freeze([...CONTENT_PATHS, MANIFEST_PATH]);
 export const CAPS = Object.freeze({ files: 4, changedLines: 400, lineLength: 3000, fileBytes: 150_000, siteBytes: 600_000 });
 
 const SKIP_DIRS = new Set(['.git', 'node_modules', 'dist']);
+// `npm install` in the Cloudflare build writes this file into the working tree (the package has no dependencies). It is not part of the change, so the
+// hash and size checks skip it; a change that COMMITS it is still refused by the path rule.
+const GENERATED = new Set(['package-lock.json']);
 
 // ---------- pure rules (no git, no disk) ----------
 const DECODE = (t) => t.replace(/&#x([0-9a-f]{1,6});?/gi, (_m, h) => String.fromCodePoint(Math.min(parseInt(h, 16), 0x10ffff))).replace(/&#([0-9]{1,7});?/g, (_m, d) => String.fromCodePoint(Math.min(Number(d), 0x10ffff)));
@@ -122,6 +125,7 @@ export function listSite(root, relative = '') {
   return fs.readdirSync(path.join(root, relative), { withFileTypes: true }).flatMap((entry) => {
     const name = path.posix.join(relative, entry.name);
     if (entry.isSymbolicLink()) throw new Error(`symbolic link not allowed: ${name}`);
+    if (relative === '' && entry.isFile() && GENERATED.has(entry.name)) return [];
     if (entry.isDirectory()) return SKIP_DIRS.has(entry.name) && relative === '' ? [] : listSite(root, name);
     if (!entry.isFile()) throw new Error(`unsupported entry: ${name}`);
     return [name];

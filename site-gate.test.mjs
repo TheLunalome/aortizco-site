@@ -183,6 +183,7 @@ bad('a protected file edit is refused even with a fresh pin', (d) => { edit(d, '
 bad('an edit of the gate itself, with a fresh pin, is refused', (d) => { edit(d, 'site-gate.mjs', (s) => `${s}\n// x\n`); pin(d); }, /path not allowed: site-gate\.mjs/);
 bad('an edit of the protected manifest is refused', (d) => { edit(d, PROTECTED_PATH, (s) => s.replace('"files"', '"files" ')); }, /path not allowed: protected-manifest/);
 bad('a file under .github is refused', (d) => { fs.mkdirSync(path.join(d, '.github', 'workflows'), { recursive: true }); fs.writeFileSync(path.join(d, '.github', 'workflows', 'x.yml'), 'on: push\n'); }, /path not allowed/);
+bad('a committed package-lock.json is refused', (d) => fs.writeFileSync(path.join(d, 'package-lock.json'), '{}'), /path not allowed: package-lock/);
 bad('a new file is refused', (d) => fs.writeFileSync(path.join(d, 'extra.html'), '<p>x</p>'), /path not allowed: extra\.html/);
 bad('a deleted content page is refused', (d) => fs.rmSync(path.join(d, 'homelome.html')), /only an edit|required file removed/);
 bad('a mode change is refused', (d) => git(d, ['update-index', '--chmod=+x', 'index.html']) && undefined, /mode/);
@@ -214,6 +215,11 @@ fs.writeFileSync(path.join(mainClone, 'explorer.js'), fs.readFileSync(path.join(
 fs.writeFileSync(path.join(mainClone, 'new-script.js'), 'x');
 r = runGate(mainClone, { CF_PAGES_BRANCH: 'main' });
 check('main build: an unpinned new file fails', r.problems.some((p) => /file not pinned: new-script\.js/.test(p)), JSON.stringify(r));
+
+fs.writeFileSync(path.join(mainClone, 'package-lock.json'), '{}');
+r = runGate(mainClone, { CF_PAGES_BRANCH: 'main' });
+check('npm install writes package-lock.json in the build: it is not an unpinned file', !r.problems.some((p) => /package-lock/.test(p)), JSON.stringify(r));
+fs.rmSync(path.join(mainClone, 'package-lock.json'));
 
 // the site as it is in this checkout must pass its own hash and size rules
 r = runGate(here, { CF_PAGES_BRANCH: 'main' });
