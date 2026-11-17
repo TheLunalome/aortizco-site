@@ -1,0 +1,20 @@
+{
+  "files": {
+    ".github/copilot-instructions.md": "7d4dbecda8f69ccc78dedfe6f6927201a1ab3a1e6765cf409162aba1b68efb58",
+    ".gitignore": "58aea3d6b4b0f8799c1e00c3b023898516997f6369ee8e13d8d4b4215f70a62b",
+    "DEPLOY-HOMELOME.md": "af67af6ecf7ddb9d9cae46fba12787951eb0f7955ef779a427520798a9f950cb",
+    "HOMEL0ME-NETWORK.md": "4f293acaec25a6c64afc2183409bd42ef8c8507b9e1257dfc6c6159baeeef30b",
+    "README.md": "2f2112336f5c93e5b2a47ffd77e06f1026d00f4e156b944063e4f6798dbe95fb",
+    "_headers": "51264758f3ac26c2f5c6a3f1f450599dcc4a6ffa3033f2b0fbf243c8c8209218",
+    "assets/homelome-topology.svg": "8aee97f1820ed25e13c97ebbf66c03c4711637aa30c0412165d1e8948bd1c128",
+    "explorer-data.json": "cf45585476c0fe63eb8485de6e5901b9a6d531c1cfa8a60485f99651e441949d",
+    "explorer.css": "6e86e1d1fb09969b17030cc0bdaa6a011169007ce99d885970a0bfd39728f1f1",
+    "explorer.js": "73b483f0c08acbbe77ca3a20c0d05998fc68b95c137a4e81ee889ded31b1f147",
+    "homelome-topology.svg": "8aee97f1820ed25e13c97ebbf66c03c4711637aa30c0412165d1e8948bd1c128",
+    "package-release.mjs": "527ebb47d11a1673cc4085077c9d6b7f87266446de43ab30623421138c99299f",
+    "package.json": "d1dfa4e77aaffc08a81c8d6ef2e2c420d4fe12a572b8b65069b1131b31beccaa",
+    "privacy-check.mjs": "6f2678013d462555bf42cc57bf2516cea95570f61a6102fbaf06ddeb5cd295c0",
+    "site-gate.mjs": "3f852cac28f12e97a09b851ced63f354a8ff6bbeaec22f25cdcbff3f3ef9d0eb",
+    "site-gate.test.mjs": "86bf44d226486d541d0fbdfaaa1cf0ac95a5bc375e51143d17e9bf70088284ad"
+  }
+}

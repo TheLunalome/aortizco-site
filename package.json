@@ -2,8 +2,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node package-release.mjs",
+    "build": "node site-gate.mjs && node package-release.mjs",
     "check": "node privacy-check.mjs",
-    "test": "node privacy-check.mjs --self-test"
+    "test": "node privacy-check.mjs --self-test && node site-gate.test.mjs",
+    "pin": "node site-gate.mjs --pin"
   }
 }
