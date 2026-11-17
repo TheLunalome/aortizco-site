@@ -90,6 +90,10 @@ h1, h2, h3 { text-wrap: balance; }
 .top nav a:hover { color: var(--fg); }
 .tbtn { font: 500 0.75rem var(--f-mono); color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; cursor: pointer; }
 .tbtn:hover { color: var(--fg); border-color: var(--muted); }
+.jump { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; padding: 9px 0; border-bottom: 1px solid var(--line); font: 400 0.72rem var(--f-mono); }
+.jump span { color: var(--muted); }
+.jump a { color: var(--muted); text-decoration: none; }
+.jump a:hover { color: var(--fg); }
 
 /* Moon phases: the status system */
 .s-live { --c: var(--live); }
@@ -237,8 +241,19 @@ h2.sec { font: 600 clamp(1.5rem, 3.4vw, 2rem)/1.15 var(--f-display); letter-spac
     </nav>
   </header>
 
+  <nav class="jump" aria-label="Jump to a section">
+    <span>Jump to</span>
+    <a href="#about">About</a>
+    <a href="#projects">Projects</a>
+    <a href="#case-study">Case study</a>
+    <a href="#how-i-work">How I work</a>
+    <a href="#experience">Experience</a>
+    <a href="#credentials">Credentials</a>
+    <a href="#off-the-clock">Off the clock</a>
+  </nav>
+
   <main>
-    <section class="hero" aria-labelledby="name">
+    <section id="about" class="hero" aria-labelledby="name">
       <div>
         <p class="role">Cyber Operations Analyst at Hillwood</p>
         <h1 id="name">Alexander Ortiz</h1>
@@ -292,7 +307,7 @@ h2.sec { font: 600 clamp(1.5rem, 3.4vw, 2rem)/1.15 var(--f-display); letter-spac
       </div>
     </section>
 
-    <section aria-labelledby="how-h">
+    <section id="how-i-work" aria-labelledby="how-h">
       <h2 class="sec" id="how-h">How I work</h2>
       <p class="intro">Habits I use in the lab and want to bring to the job.</p>
       <ul class="principles">
@@ -345,7 +360,7 @@ h2.sec { font: 600 clamp(1.5rem, 3.4vw, 2rem)/1.15 var(--f-display); letter-spac
       </div>
     </section>
 
-    <section aria-labelledby="off-h">
+    <section id="off-the-clock" aria-labelledby="off-h">
       <h2 class="sec" id="off-h">Off the clock</h2>
       <ul class="chips" style="margin-top:16px">
         <li>Electronic music and festivals</li>
