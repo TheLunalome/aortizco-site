@@ -14,7 +14,7 @@
     "package-release.mjs": "527ebb47d11a1673cc4085077c9d6b7f87266446de43ab30623421138c99299f",
     "package.json": "d1dfa4e77aaffc08a81c8d6ef2e2c420d4fe12a572b8b65069b1131b31beccaa",
     "privacy-check.mjs": "6f2678013d462555bf42cc57bf2516cea95570f61a6102fbaf06ddeb5cd295c0",
-    "site-gate.mjs": "4a3899172ec9c8859bc2c45e9d59f37cc80fbf420eb3597ee031836c239c9e41",
-    "site-gate.test.mjs": "861f6b62da8d0e34a2069f82f15c71b5e064d3f8e8a2e77bbbbf201a24f30ecf"
+    "site-gate.mjs": "3f852cac28f12e97a09b851ced63f354a8ff6bbeaec22f25cdcbff3f3ef9d0eb",
+    "site-gate.test.mjs": "86bf44d226486d541d0fbdfaaa1cf0ac95a5bc375e51143d17e9bf70088284ad"
   }
 }
