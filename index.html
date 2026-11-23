@@ -388,11 +388,20 @@ h2.sec { font: 600 clamp(1.5rem, 3.4vw, 2rem)/1.15 var(--f-display); letter-spac
 <script>
 /* Edit this block to update the site. Add contact links to CONFIG.contact and they appear automatically. */
 var CONFIG = {
-  updated: "2026-11-16",
+  updated: "2026-11-23",
   contact: { email: "aortizco@outlook.com", linkedin: "https://www.linkedin.com/in/alexander-ortiz-it", github: "" }
 };
 
 var PROJECTS = [
+  {
+    name: "Homelome public guide and Architecture Explorer", status: "live", area: "Portfolio", since: "Oct 2026",
+    summary: "A public guide to generic home-technology roles and an interactive map of their relationships.",
+    points: [
+      "The guide explains role boundaries and recovery principles without publishing private inventory or live system status.",
+      "The explorer labels relationship types and evidence, and is not a live monitoring view."
+    ],
+    stack: ["Public guide", "Architecture Explorer"]
+  },
   {
     name: "Homelome MCP portal", status: "live", area: "Lab", since: "Oct 2026",
     summary: "Lets an approved assistant inspect selected Homelome systems remotely through a scoped, read-first design.",
